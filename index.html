@@ -1,0 +1,1011 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RoboSpatial-Home Challenge — Reasoner ⊕ Pointing Specialist</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+<style>
+  :root{ --navy:#1b2a4a; --green:#1a7a1a; --red:#b0413a; --blue:#2e5fa3; --amber:#d08a00; }
+  html{ scroll-behavior:smooth; }
+  section[id]{ scroll-margin-top:3.6rem; }
+  .section > .container{ max-width:1440px !important; padding-left:2rem; padding-right:2rem; }
+  .hero .container{ max-width:1440px !important; padding-left:2rem; padding-right:2rem; }
+  .navbar.is-tab .container{ max-width:1440px !important; }
+  .navbar.is-tab{ border-bottom:1px solid #e7e7e7; box-shadow:0 1px 4px rgba(0,0,0,.04); }
+  .navbar.is-tab .brand{ font-weight:700; color:var(--navy); }
+  .navbar.is-tab a.navbar-item{ color:#555; font-weight:600; }
+  .navbar.is-tab a.navbar-item.active{ color:var(--navy); border-bottom:3px solid var(--navy); }
+  .hero.head{ background:linear-gradient(180deg,#f6f9fc,#fff); }
+  .title.big{ color:var(--navy); }
+  .title.big.is-1{ font-size:4.2rem; }
+  .hero .subtitle.is-4{ font-size:2rem; }
+  .hero .is-size-6{ font-size:1.2rem !important; }
+  .tag.place.is-medium{ font-size:1.05rem; padding:.55em 1.2em; height:auto; }
+  .hero .buttons .button{ font-size:1.2rem; height:auto; padding:.7em 1.3em; }
+  .place{ background:var(--amber); color:#fff; }
+  .metric .n{ font-size:3.4rem; font-weight:800; color:var(--navy); line-height:1; }
+  .metric .n sup{ font-size:.55em; }
+  .metric .l{ color:#666; font-size:1.05rem; margin-top:.25rem; }
+  .anon-link{ position:relative; display:inline-flex; align-items:center; }
+  .anon-link .tip{ position:absolute; bottom:calc(100% + 10px); left:50%; transform:translateX(-50%) translateY(5px);
+    background:#1b2a4a; color:#fff; font-size:.82rem; font-weight:500; font-style:normal; line-height:1.45;
+    padding:.55rem .75rem; border-radius:9px; width:max-content; max-width:280px; white-space:normal; text-align:center;
+    opacity:0; pointer-events:none; transition:opacity .18s ease, transform .18s ease; z-index:60; box-shadow:0 6px 18px rgba(0,0,0,.18); }
+  .anon-link .tip b{ color:#ffd21e; } .anon-link .tip i{ color:#cfe0ff; }
+  .anon-link .tip::after{ content:''; position:absolute; top:100%; left:50%; transform:translateX(-50%); border:6px solid transparent; border-top-color:#1b2a4a; }
+  .anon-link:hover .tip{ opacity:1; transform:translateX(-50%) translateY(0); }
+  .sec-title{ color:var(--navy); }
+  .kicker{ color:var(--amber); font-weight:700; letter-spacing:.06em; text-transform:uppercase; font-size:.78rem; }
+  .task-badge{ background:var(--navy); color:#fff; border-radius:6px; padding:.15rem .6rem; font-weight:700; }
+  .pill{ display:inline-block; border-radius:5px; padding:.05rem .5rem; font-size:.72rem; font-weight:700; letter-spacing:.03em; }
+  .pill.p{ background:#fdeceb; color:var(--red);} .pill.f{ background:#eaf1fb; color:var(--blue);} .pill.i{ background:#eaf5ea; color:var(--green);}
+  .block-card{ height:100%; border:1px solid #f2f2f2; border-radius:8px; padding:1.35rem 1.35rem; background:#fff;
+     box-shadow:0 .5em 1em -.125em rgba(10,10,10,.08), 0 0 0 1px rgba(10,10,10,.02); transition:box-shadow .15s ease; }
+  .block-card:hover{ box-shadow:0 .6em 1.2em -.1em rgba(10,10,10,.12); }
+  /* carousel (Problem / Fix / Insight stepper) */
+  .carousel .stepper{ display:flex; align-items:center; justify-content:center; gap:1rem; margin-bottom:1.6rem; }
+  .carousel .pills{ display:flex; gap:.5rem; }
+  .step-pill{ border:1px solid #dcdcdc; background:#fff; border-radius:22px; padding:.35rem 1.15rem; font-weight:700; color:#9a9a9a; cursor:pointer; transition:all .15s ease; font-size:.9rem; }
+  .step-pill:hover{ color:#555; }
+  .step-pill.active.p{ color:var(--red);  border-color:var(--red);  background:#fdeceb; }
+  .step-pill.active.f{ color:var(--blue); border-color:var(--blue); background:#eaf1fb; }
+  .step-pill.active.i{ color:var(--green);border-color:var(--green);background:#eaf5ea; }
+  .arrow{ width:2.5rem; height:2.5rem; border-radius:50%; border:1px solid #dcdcdc; background:#fff; font-size:1.35rem; line-height:1; color:#555; cursor:pointer; }
+  .arrow:hover{ background:#f2f2f2; }
+  .arrow:disabled{ opacity:.3; cursor:default; }
+  .panel{ display:none; animation:fade .25s ease; }
+  .panel.active{ display:block; }
+  @keyframes fade{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:none;} }
+  /* clickable step-cards (structure stays visible) */
+  .step-card{ cursor:pointer; transition:all .15s ease; }
+  .step-card .pill{ display:inline-block; margin-bottom:.4rem; }
+  .step-card.active.p{ border-color:var(--red);  box-shadow:0 .55em 1.1em -.1em rgba(176,65,58,.28); }
+  .step-card.active.f{ border-color:var(--blue); box-shadow:0 .55em 1.1em -.1em rgba(46,95,163,.28); }
+  .step-card.active.i{ border-color:var(--green);box-shadow:0 .55em 1.1em -.1em rgba(26,122,26,.28); }
+  /* 3 cards flanked by arrows */
+  .cards-arrows{ display:flex; align-items:center; gap:1rem; }
+  .cards-arrows .arrow{ flex:0 0 auto; }
+  /* fixed-size detail area that swaps */
+  .detail{ min-height:400px; display:flex; align-items:center; justify-content:center; margin-top:1.6rem; padding:2.75rem 1.25rem 3.5rem; }
+  /* padding on all four sides for every panel: detail padding + kill Bulma's column bleed so cards & headers stay inset */
+  .detail .columns:not(.is-mobile){ margin-left:0; margin-right:0; margin-top:0; }
+  .detail .columns:not(.is-mobile):last-child{ margin-bottom:0; }
+  .detail .panel{ width:100%; padding-top:1rem; padding-bottom:1.25rem; }
+  .detail .panel img{ max-height:360px; width:auto; margin:0 auto; display:block; }
+  .step-lead{ font-size:1.15rem; line-height:1.6; color:#333; }
+  .quote{ background:#f7f8fa; border-left:3px solid var(--red); padding:.6rem .8rem; font-size:.82rem; color:#555; border-radius:0 4px 4px 0; margin:.55rem 0; line-height:1.5; }
+  .quote{ border-left-color:#2e5fa3; }
+  .quote .hl{ color:var(--amber); font-weight:600; }
+  .quote .no{ color:var(--red); font-weight:700; }
+  .quote .lbl{ color:#2e5fa3; font-weight:700; }
+  .hint{ font-size:.85rem; color:#555; font-style:italic; }
+  .hint b{ color:var(--green); font-style:normal; }
+  /* frame-prompt rows */
+  .fr-row{ border:1px solid #ececec; border-radius:7px; padding:.7rem .9rem; margin:0; background:#fff; height:100%; }
+  .fr-row.obj{ border-color:var(--green); background:#f4faf4; }
+  .fr-head{ display:flex; justify-content:space-between; align-items:baseline; }
+  .fr-name{ font-weight:700; color:var(--navy); font-size:.82rem; letter-spacing:.04em; }
+  .fr-name .chosen{ color:var(--green); font-weight:700; font-size:.72rem; margin-left:.4rem; }
+  .fr-score{ font-weight:800; color:var(--navy); }
+  .fr-text{ font-family:Consolas,Menlo,monospace; font-size:.71rem; color:#555; margin-top:.35rem; line-height:1.45; }
+  .fr-fmt code{ background:#eef1f6; color:var(--navy); }
+  .quote.after{ border-left-color:var(--green); background:#f4faf4; }
+  .quote.after .hl{ color:var(--green); }
+  .quote .yes{ color:var(--green); font-weight:700; }
+  /* nested finding sub-tabs (inside Insight) */
+  .subtab-bar{ display:flex; justify-content:center; gap:.5rem; margin-bottom:1.4rem; flex-wrap:wrap; }
+  .subtab{ border:1px solid #dcdcdc; background:#fff; border-radius:20px; padding:.4rem 1.05rem; font-weight:700; color:#9a9a9a; cursor:pointer; font-size:.85rem; transition:all .15s ease; }
+  .subtab:hover{ color:#555; }
+  .subtab.active{ color:var(--navy); border-color:var(--navy); background:#eef1f6; }
+  .subpanel{ display:none; }
+  .subpanel.active{ display:block; animation:fade .25s ease; }
+  .rule{ background:#1b2a4a; color:#e8ecf3; border-radius:6px; padding:.85rem 1.05rem; font-size:.82rem; line-height:1.55; overflow-x:auto; margin:0; }
+  .rule code{ color:inherit; background:none; padding:0; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
+  /* scroll-driven version */
+  .scrolly-bar{ position:sticky; top:3.4rem; z-index:15; background:rgba(255,255,255,.96); padding:.7rem 0; text-align:center; border-bottom:1px solid #eee; }
+  .scrolly-step{ min-height:76vh; display:flex; align-items:center; }
+  .opt-label{ text-align:center; font-weight:800; color:var(--navy); letter-spacing:.03em; }
+  figure img{ border:1px solid #eee; border-radius:6px; }
+  .cap{ color:#777; font-size:.82rem; }
+  pre.cite{ background:#f5f6f8; }
+  .g{color:var(--green)} .r{color:var(--red)} .b{color:var(--blue)}
+  footer.footer{ background:#f6f9fc; }
+  .model-chip{ display:inline-flex; align-items:center; gap:.5rem; background:#eef1f6; border:1px solid #dbe2ec; border-radius:22px; padding:.4rem .95rem; font-size:.85rem; color:#3a4a63; }
+  .model-chip .mc-label{ color:#8a97a8; font-weight:700; font-size:.68rem; text-transform:uppercase; letter-spacing:.05em; }
+  .model-chip b{ color:var(--navy); }
+  .model-chip .mc-role{ color:#9aa6b5; }
+  .avatar{ width:132px; height:132px; border-radius:50%; border:3px solid #e7e7e7; background:#fff; object-fit:cover; margin:0 auto; display:block; }
+  .social-ic{ display:inline-flex; align-items:center; justify-content:center; width:42px; height:42px; border-radius:50%; border:1px solid #d8d8d8; color:#555; background:#fff; transition:all .15s ease; }
+  .social-ic:hover{ color:#fff; background:var(--navy); border-color:var(--navy); transform:translateY(-2px); }
+  .social-ic svg{ width:21px; height:21px; }
+
+  /* ---------- mobile / tablet ---------- */
+  @media (max-width: 1023px){
+    /* Bulma hides .navbar-menu below 1024px; force the tab row to stay visible & scroll */
+    .navbar.is-tab .navbar-menu{ display:block !important; box-shadow:none; padding:0; background:transparent; }
+    .navbar.is-tab .navbar-end{ display:flex; flex-direction:row; overflow-x:auto; -webkit-overflow-scrolling:touch; }
+    .navbar.is-tab .navbar-item{ padding:.45rem .6rem; font-size:.82rem; white-space:nowrap; }
+    .navbar.is-tab .brand{ font-size:.8rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:62vw; }
+    .section > .container, .hero .container{ max-width:100% !important; }
+  }
+  @media (max-width: 768px){
+    .title.big.is-1{ font-size:1.95rem !important; gap:.4rem !important; }
+    .title.big.is-1 img{ height:1.3em !important; }
+    .subtitle.is-4{ font-size:1.02rem !important; }
+    .section > .container, .hero .container{ padding-left:1rem; padding-right:1rem; }
+    /* hero metrics: let the 5 wrap to ~3 per row instead of one cramped line */
+    .hero .columns.is-mobile{ flex-wrap:wrap; }
+    .hero .columns.is-mobile > .column.metric{ flex:0 0 30%; }
+    .metric .n{ font-size:1.85rem; }
+    .metric .n sup{ font-size:.55em; }
+    .metric .l{ font-size:.75rem; }
+    /* carousel: tighter, images not capped by desktop heights */
+    .detail{ padding:1.4rem .3rem 1.9rem; min-height:auto; }
+    .cards-arrows{ gap:.3rem; }
+    .arrow{ width:34px; height:34px; }
+    .subtab-bar{ gap:.35rem; }
+    .subtab{ font-size:.72rem; padding:.32rem .62rem; }
+    /* stack in-card image+text (they were is-mobile = side-by-side) */
+    .detail .columns.is-mobile{ display:block; }
+    .detail .columns.is-mobile > .column{ width:100% !important; }
+    .detail .panel img, figure img{ max-height:none !important; }
+    /* wide tables scroll instead of overflowing */
+    .table{ display:block; overflow-x:auto; white-space:nowrap; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="navbar is-tab is-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-brand"><a class="navbar-item brand" href="https://embodied-reasoning.github.io/robospatial.html" target="_blank" rel="noopener">RoboSpatial-Home · ERA @ CVPR 2026</a></div>
+    <div class="navbar-menu"><div class="navbar-end">
+      <a class="navbar-item nav-tab" href="#summary">Summary</a>
+      <a class="navbar-item nav-tab" href="#config">Configuration</a>
+      <a class="navbar-item nav-tab" href="#compat">Compatibility</a>
+      <a class="navbar-item nav-tab" href="#context">Context</a>
+      <a class="navbar-item nav-tab" href="#team">Team</a>
+      <a class="navbar-item" href="[CODE_URL]">GitHub</a>
+    </div></div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header id="top" class="hero head is-medium" style="padding-top:3.6rem;">
+  <div class="hero-body has-text-centered" style="padding-bottom:1.5rem;"><div class="container">
+    <span class="tag place is-medium">2nd place · RoboSpatial Challenge · Technical Report</span>
+    <h1 class="title big is-1" style="margin-top:1rem;display:flex;align-items:center;justify-content:center;gap:.6rem;flex-wrap:wrap;">
+      <a href="https://www.instagram.com/anonymous_ikm/" target="_blank" rel="noopener" class="anon-link"><img src="figs/anon.png" alt="Anonymous" style="height:1.5em;width:auto;vertical-align:middle;cursor:pointer;"><span class="tip">This is my favorite character called <b>ikmyung</b> — it means <i>anonymous</i>. @anonymous_ikm</span></a>
+      Team — Anonymous
+    </h1>
+    <p class="subtitle is-4">A zero-shot, open-weight recipe for spatial reasoning on RoboSpatial-Home</p>
+    <p class="is-size-6" style="color:#555;"><a href="https://edw2n.github.io" target="_blank" rel="noopener" style="color:inherit;text-decoration:none;">Eunsu Baek</a>, Seoul National University</p>
+    <div class="buttons is-centered" style="margin-top:1.2rem;">
+      <a class="button is-light" href="[VIDEO_URL]">🎥 Video</a>
+      <a class="button is-light" href="[SLIDES_URL]">📊 Slides</a>
+      <a class="button is-light" href="[CODE_URL]">💻 Code</a>
+    </div>
+    <div class="columns is-mobile is-centered" style="margin-top:3.2rem;margin-bottom:1rem;max-width:940px;margin-left:auto;margin-right:auto;">
+      <div class="column metric has-text-centered"><div class="n">83.1</div><div class="l">Overall</div></div>
+      <div class="column metric has-text-centered"><div class="n">91.5</div><div class="l">Configuration</div></div>
+      <div class="column metric has-text-centered"><div class="n">79.1</div><div class="l">Compatibility</div></div>
+      <div class="column metric has-text-centered"><div class="n">78.7</div><div class="l">Context</div></div>
+      <div class="column metric has-text-centered"><div class="n">2<sup>nd</sup></div><div class="l">Leaderboard</div></div>
+    </div>
+    <p class="is-size-7" style="color:#888;margin-top:.3rem;">public point-in-mask / yes-no accuracy · zero-shot, no training</p>
+  </div></div>
+</header>
+
+<!-- SUMMARY -->
+<section id="summary" class="section" style="padding-top:3rem;">
+  <div class="container">
+
+    <!-- TL;DR -->
+    <div style="max-width:900px;margin:0 auto;">
+      <p class="content is-medium has-text-centered" style="color:#333;">
+        We place <b>2nd</b> on RoboSpatial-Home — zero-shot, no fine-tuning — by keeping two
+        open-weight models fixed and <b>eliciting</b> the spatial skills they already have.
+        A <b>reasoner</b> (Qwen3-VL-32B-Thinking) and a <b>pointing specialist</b> (RoboBrain2.5-8B)
+        are tuned per task along a few inference-time knobs — a <b>reference-frame prompt</b>,
+        <b>decoding</b>, a <b>reasoning-trust parser</b>, and a complementary <b>two-model union</b>.
+        The right setting is <b>task-specific</b>: the same knob that helps one task can hurt another
+        (greedy wins Configuration, sampling wins Compatibility). Every choice is read off what the
+        models reveal in their own reasoning.
+      </p>
+    </div>
+
+    <!-- Three tasks -->
+    <p class="kicker has-text-centered" style="margin-top:3rem;">The benchmark</p>
+    <h2 class="title is-3 sec-title has-text-centered">Three spatial tasks</h2>
+    <div class="columns" style="margin-top:1rem;">
+      <div class="column"><div class="block-card"><p class="title is-5">Configuration</p>
+        <p class="cap" style="margin-bottom:.5rem;">directional yes/no</p>
+        <p>Does a directional relation hold? e.g. “Is the monitor behind the sofa?”</p>
+        <p class="has-text-weight-bold" style="color:var(--navy);margin-top:.5rem;">91.5%</p></div></div>
+      <div class="column"><div class="block-card"><p class="title is-5">Compatibility</p>
+        <p class="cap" style="margin-bottom:.5rem;">fit yes/no · 83% Yes</p>
+        <p>Does an object fit in a space? A Yes-heavy split where raw accuracy is gameable.</p>
+        <p class="has-text-weight-bold" style="color:var(--navy);margin-top:.5rem;">79.1%</p></div></div>
+      <div class="column"><div class="block-card"><p class="title is-5">Context</p>
+        <p class="cap" style="margin-bottom:.5rem;">pointing · point-in-mask</p>
+        <p>Point at a described region (≤2 points). Correct if a point lands in the GT mask.</p>
+        <p class="has-text-weight-bold" style="color:var(--navy);margin-top:.5rem;">78.7%</p></div></div>
+    </div>
+
+    <!-- Goal / thesis -->
+    <p class="kicker has-text-centered" style="margin-top:4rem;">Our goal</p>
+    <h2 class="title is-3 sec-title has-text-centered">Don’t train the model — elicit what it already knows</h2>
+    <p class="content is-medium has-text-centered" style="max-width:880px;margin:.5rem auto 0;color:#333;">
+      A pretrained VLM already carries much of the ability these spatial tasks demand — the real question is <b>how to elicit it</b>.
+      Treating the model as <b>fixed</b>, we ask: what did it actually learn from pretraining, what <b>tendencies and biases</b> does it carry,
+      and how do we draw out the right behavior through <b>prompting and inference-time choices alone</b>? This report is that exploration.
+    </p>
+    <p class="content has-text-centered" style="max-width:880px;margin:.7rem auto 0;color:#666;">
+      We hope the analysis and recipe are <b>complementary</b> — a way to elicit more from other well-trained models,
+      and to decide where additional training would actually help.
+    </p>
+
+    <!-- Design space -->
+    <p class="kicker has-text-centered" style="margin-top:3rem;">Design space</p>
+    <h2 class="title is-3 sec-title has-text-centered">Six axes we tune — no training, just choices</h2>
+    <p class="content has-text-centered" style="max-width:840px;margin:.5rem auto 1.5rem;color:#555;">
+      The whole recipe is <b>choosing a setup</b> along these axes — and the best choice
+      <b>flips per task</b>: the same knob that helps one task hurts another. So every choice is task-specific, backed by analysis.
+    </p>
+    <div class="columns is-multiline">
+      <div class="column is-4"><div class="block-card"><p class="title is-6" style="margin-bottom:.4rem;">① Model <span class="cap">· which base model</span></p>
+        <p>Depending on their <b>training data</b>, models specialize in <b>different spatial tasks</b>. We pair a <b>spatial reasoner</b> (Qwen3-VL-Thinking) with a <b>pointing specialist</b> (RoboBrain-2.5).</p></div></div>
+      <div class="column is-4"><div class="block-card"><p class="title is-6" style="margin-bottom:.4rem;">② Reasoning <span class="cap">· Thinking vs Instruct checkpoint</span></p>
+        <p>Qwen3-VL ships as <b>two separate checkpoints</b> — <b>Thinking</b> emits <code>&lt;think&gt;</code> traces and avoids defaulting to a <b>prior</b>. Reasoning is <b>asymmetric</b>: it helps the reasoner (Qwen keeps it even for pointing) but <b>derails RoboBrain’s pointing</b>.</p></div></div>
+      <div class="column is-4"><div class="block-card"><p class="title is-6" style="margin-bottom:.4rem;">③ Decoding <span class="cap">· greedy vs sampling</span></p>
+        <p>How token probabilities become an answer. <b>Greedy</b> always takes the single most-likely token — fast and deterministic; <b>sampling</b> draws from the distribution, <b>exploring alternatives</b> and recovering minority answers greedy skips (at some variance).</p></div></div>
+      <div class="column is-4"><div class="block-card"><p class="title is-6" style="margin-bottom:.4rem;">④ Frame prompt <span class="cap">· none / ego / object / world</span></p>
+        <p>Naming a reference frame disciplines <b>directional</b> reasoning — but for <b>size/fit</b> it can’t supply reliable size or clearance, and forcing a full frame mapping only distracts.</p></div></div>
+      <div class="column is-4"><div class="block-card"><p class="title is-6" style="margin-bottom:.4rem;">⑤ Parser <span class="cap">· trust reasoning vs final token</span></p>
+        <p>The final yes/no token can <b>contradict the reasoning</b>; trusting the reasoning’s conclusion recovers stray flips.</p></div></div>
+      <div class="column is-4"><div class="block-card"><p class="title is-6" style="margin-bottom:.4rem;">⑥ Union <span class="cap">· single vs two-model</span></p>
+        <p>For <b>pointing</b>, union two models whose mistakes barely overlap — a question counts if <b>either</b> model’s point lands inside (≤2 points total). Complementary errors → far more coverage than either model alone.</p></div></div>
+    </div>
+
+    <!-- Our recipe -->
+    <p class="kicker has-text-centered" style="margin-top:3rem;">Our recipe</p>
+    <h2 class="title is-3 sec-title has-text-centered" style="margin-bottom:.3rem;">The setup each task lands on</h2>
+    <p class="cap has-text-centered" style="margin-bottom:1rem;">Micro = plain accuracy · Macro = balanced over Yes/No for VQA, mean over the 6 relations for pointing.</p>
+    <table class="table is-fullwidth is-hoverable" style="font-size:.9rem;">
+      <thead><tr><th>Task</th><th>Approach <span class="cap">· no training</span></th><th class="has-text-right">Micro</th><th class="has-text-right">Macro</th></tr></thead>
+      <tbody>
+        <tr><td><b>Configuration</b> <span class="cap">· relational</span></td><td>Qwen3-VL-32B-Thinking · <b>object-frame</b> prompt · greedy · reasoning · parser</td><td class="has-text-right">91.53</td><td class="has-text-right">91.9</td></tr>
+        <tr><td><b>Compatibility</b> <span class="cap">· fit</span></td><td>Qwen3-VL-32B-Thinking · <b>no-frame</b> · <b>sampling</b> · reasoning · parser</td><td class="has-text-right">79.05</td><td class="has-text-right">74.1</td></tr>
+        <tr><td><b>Context</b> <span class="cap">· pointing</span></td><td>RoboBrain2.5-8B-MT <span class="cap">(greedy, no reasoning)</span> <b>⊕</b> Qwen <span class="cap">(sampling, object, reasoning)</span> → <b>2-point union</b></td><td class="has-text-right">78.69</td><td class="has-text-right">72.3</td></tr>
+        <tr style="background:#e9f4ea;"><td><b>Overall</b></td><td><b>zero-shot · no training</b></td><td class="has-text-right has-text-weight-bold">83.09 → 2nd 🥈</td><td class="has-text-right has-text-weight-bold">79.4</td></tr>
+      </tbody>
+    </table>
+
+    <!-- Results table -->
+    <div style="max-width:960px;margin:2.5rem auto 0;">
+      <p class="kicker has-text-centered">Results</p>
+      <h2 class="title is-3 sec-title has-text-centered">Leaderboard — ahead of every published baseline</h2>
+      <table class="table is-fullwidth is-hoverable" style="margin-top:1rem;font-size:.9rem;">
+        <thead><tr>
+          <th>Model</th>
+          <th class="has-text-right">Config<br><span class="cap">(micro / macro)</span></th>
+          <th class="has-text-right">Compat<br><span class="cap">(micro / macro)</span></th>
+          <th class="has-text-right">Context<br><span class="cap">(micro / macro)</span></th>
+          <th class="has-text-right">Overall</th>
+        </tr></thead>
+        <tbody>
+          <tr style="background:#e9f4ea;">
+            <td><b>Ours</b> — Qwen3-VL-32B-Thinking ⊕ RoboBrain2.5-8B-MT <span class="cap">· union recipe</span></td>
+            <td class="has-text-right"><b>91.5</b> <span class="cap">/ 91.9</span></td>
+            <td class="has-text-right"><b>79.1</b> <span class="cap">/ 74.1</span></td>
+            <td class="has-text-right"><b>78.7</b> <span class="cap">/ 72.3</span></td>
+            <td class="has-text-right has-text-weight-bold" style="color:var(--green);font-size:1.05rem;">83.1</td></tr>
+          <tr><td>RoboBrain2.5-8B-MT <span class="cap">· pointing specialist, alone</span></td><td class="has-text-right">89.8 <span class="cap">/ 88.1</span></td><td class="has-text-right">59.0 <span class="cap">/ 64.3</span></td><td class="has-text-right">66.4 <span class="cap">/ 61.0</span></td><td class="has-text-right">71.7</td></tr>
+          <tr><td>Qwen3-VL-32B-Thinking <span class="cap">· reasoner, alone</span></td><td class="has-text-right">84.8 <span class="cap">/ 86.3</span></td><td class="has-text-right">68.6 <span class="cap">/ 59.0</span></td><td class="has-text-right">59.8 <span class="cap">/ 55.1</span></td><td class="has-text-right">71.1</td></tr>
+          <tr><td>RoboRefer-8B-SFT</td><td class="has-text-right">84.8 <span class="cap">/ 82.0</span></td><td class="has-text-right">30.5 <span class="cap">/ 44.8</span></td><td class="has-text-right">61.5 <span class="cap">/ 58.7</span></td><td class="has-text-right">58.9</td></tr>
+          <tr><td>RoboPoint-13B</td><td class="has-text-right">71.2 <span class="cap">/ 65.0</span></td><td class="has-text-right">71.4 <span class="cap">/ 54.1</span></td><td class="has-text-right">27.9 <span class="cap">/ 26.8</span></td><td class="has-text-right">56.8</td></tr>
+          <tr><td>LLaVA-NeXT</td><td class="has-text-right">71.2 <span class="cap">/ 64.2</span></td><td class="has-text-right">70.5 <span class="cap">/ 44.7</span></td><td class="has-text-right">0.0 <span class="cap">/ 0.0</span></td><td class="has-text-right">47.2</td></tr>
+          <tr><td>Qwen2-VL</td><td class="has-text-right">83.0 <span class="cap">/ 79.8</span></td><td class="has-text-right">45.7 <span class="cap">/ 49.6</span></td><td class="has-text-right">1.6 <span class="cap">/ 1.1</span></td><td class="has-text-right">43.4</td></tr>
+          <tr><td>SpatialVLM</td><td class="has-text-right">59.3 <span class="cap">/ 51.8</span></td><td class="has-text-right">42.9 <span class="cap">/ 47.9</span></td><td class="has-text-right">4.1 <span class="cap">/ 4.0</span></td><td class="has-text-right">35.4</td></tr>
+          <tr><td>Molmo-7B</td><td class="has-text-right">62.7 <span class="cap">/ 67.5</span></td><td class="has-text-right">18.1 <span class="cap">/ 50.6</span></td><td class="has-text-right">7.4 <span class="cap">/ 5.7</span></td><td class="has-text-right">29.4</td></tr>
+          <tr style="color:#9aa6b5;"><td><i>Qwen3-VL 235B-A22B Thinking</i> <span class="cap">· published, not run by us</span></td><td class="has-text-right cap">—</td><td class="has-text-right cap">—</td><td class="has-text-right cap">—</td><td class="has-text-right">73.9</td></tr>
+          <tr style="color:#9aa6b5;"><td><i>GPT-5</i> <span class="cap">· published, API</span></td><td class="has-text-right cap">—</td><td class="has-text-right cap">—</td><td class="has-text-right cap">—</td><td class="has-text-right">52.5</td></tr>
+        </tbody>
+      </table>
+      <p class="cap" style="margin-top:.5rem;line-height:1.6;">
+        <b>Micro</b> (before the “/”) = plain accuracy; <b>macro</b> (after) = balanced accuracy over Yes/No for Configuration &amp; Compatibility (guards against the 83% Yes-prior), and the mean over the <b>6 spatial relations</b> (left / right / front / behind / above / below) for Context. <b>Overall</b> = mean of the three tasks; our macro overall is <b>79.4</b>.
+        Every non-grey row is <b>our own run</b> through the official harness. Neither base model alone clears ~72 — the per-task tuning and the two-model <b>union add +11.5</b>. General VLMs collapse on <b>pointing</b> (LLaVA-NeXT / Qwen2-VL ≈ 0) or on <b>Compatibility</b> (Molmo 18). Grey rows are published reference numbers for models we did not run.
+      </p>
+      <p class="cap has-text-centered">Zero-shot, open-weight. Fill baseline column with leaderboard references.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- TASK 1: CONFIGURATION -->
+<section id="config" class="section has-background-white-bis">
+  <div class="container">
+    <p class="kicker" style="margin-bottom:.5rem;">Task 1</p>
+    <h2 class="title is-3 sec-title" style="margin-bottom:.7rem;"><span class="task-badge">Configuration</span>&nbsp;&nbsp;Directional yes/no&nbsp;&nbsp;<span class="tag is-dark is-medium" style="vertical-align:middle;">91.5%</span></h2>
+    <p class="is-size-6" style="color:#666;margin-bottom:.9rem;">“Is the monitor behind the sofa?” — does a directional relation hold?</p>
+    <p style="margin-bottom:2.2rem;"><span class="model-chip"><span class="mc-label">Base model</span> <b>Qwen3-VL-32B-Thinking</b> <span class="mc-role">· reasoner</span></span></p>
+    <div class="carousel">
+      <div class="cards-arrows">
+        <button class="arrow prev" aria-label="prev">‹</button>
+        <div class="columns" style="flex:1;margin:0;">
+          <div class="column is-4"><div class="block-card step-card p active" data-i="0"><span class="pill p">Candidates &amp; Challenges</span>
+            <p style="margin-top:.5rem;">Among prompt settings (default / ego / object / world), the <b>default</b> judges the relation <b>too literally</b> → <b>over-rejects</b> valid cases (“on ≠ above”).</p></div></div>
+          <div class="column is-4"><div class="block-card step-card f" data-i="1"><span class="pill f">Strategy</span>
+            <p style="margin-top:.5rem;">Prepend a one-line <b>reference-frame instruction</b> (object-centric), decode with <b>greedy</b>, and <b>trust the reasoning</b> when the final token disagrees (parser).</p></div></div>
+          <div class="column is-4"><div class="block-card step-card i" data-i="2"><span class="pill i">Findings</span>
+            <p style="margin-top:.5rem;">It <b>reasons about the spatial relation</b> itself (not literal word-matching) — yet <b>can’t rigorously tell object / ego / world-centric frames apart</b> (never trained on them).</p></div></div>
+        </div>
+        <button class="arrow next" aria-label="next">›</button>
+      </div>
+      <div class="detail">
+        <div class="panel active" data-i="0"><div class="columns">
+          <div class="column is-6"><div class="block-card" style="box-shadow:none;">
+            <p><b>Case 1 — Literal matching (wrong axis)</b><br><span class="cap">The model <u>latches onto the most obvious relation</u> (“it’s on the right”), then <u>rejects because it doesn’t literally match the queried word</u> (behind) — it never checks whether the queried relation holds.</span></p>
+            <div class="columns is-mobile is-vcentered" style="margin:.3rem 0;">
+              <div class="column is-5" style="padding:.4rem;"><figure><img src="figs/config/case1.png"></figure></div>
+              <div class="column is-7" style="padding:.4rem;">
+                <p class="quote"><span class="lbl">DEFAULT (no frame prompt): <span class="no">No ✗</span></span><br>
+                So, let’s look at the image. The sofa is the gray two-seater. The monitor is on the desk <span class="hl">to the right. Is the monitor behind the sofa?</span> Let’s check positions. The sofa is in the middle, the desk with the monitor is <span class="hl">to the right of</span> the sofa. So the monitor is <span class="hl">not behind the sofa; it’s to the side.</span> So the answer is no.</p>
+                <p class="hint"><b><i>Humans</i></b> naturally interpret the scene <u>through the queried word</u>: asked “behind?”, a person <b>reasons about the front–back axis</b> and answers <b>Yes</b> — true under all three frames.</p>
+              </div>
+            </div>
+          </div></div>
+          <div class="column is-6"><div class="block-card" style="box-shadow:none;">
+            <p><b>Case 2 — Over-strict definition (too narrow)</b><br><span class="cap">The model applies the queried word by its <u>strictest definition</u> (“above” = must be separated by gap), so “on the counter” fails the test — it <u>rejects on a rigid technicality</u>.</span></p>
+            <div class="columns is-mobile is-vcentered" style="margin:.3rem 0;">
+              <div class="column is-5" style="padding:.4rem;"><figure><img src="figs/config/case2.png"></figure></div>
+              <div class="column is-7" style="padding:.4rem;">
+                <p class="quote"><span class="lbl">DEFAULT (no frame prompt): <span class="no">No ✗</span></span><br>
+                So, let’s look at the image. The microwave is <span class="hl">on the countertop</span>, right? The counter is the granite surface, and the microwave is <span class="hl">sitting on it. So it’s not above the counter; it’s on the counter.</span> Therefore, the answer is no.</p>
+                <p class="hint"><b><i>Humans</i></b> read spatial relations <u>flexibly</u>. “Above” includes resting on top of, so the answer is <b>Yes</b> — true under all three frames.</p>
+              </div>
+            </div>
+          </div></div>
+        </div></div>
+        <div class="panel" data-i="1" style="width:100%;">
+          <div class="subtabs">
+            <div class="subtab-bar">
+              <button class="subtab" data-i="0">① Name the frame</button>
+              <button class="subtab" data-i="1">② Fix parser</button>
+              <button class="subtab" data-i="2">③ Decoding: greedy</button>
+            </div>
+            <div class="subpanel" data-i="0">
+          <p class="fr-fmt has-text-centered" style="margin-bottom:1rem;"><span class="lbl">Prompt format —</span> <code>[FRAME INSTRUCTION]</code> + (blank line) + <code>[ORIGINAL QUESTION]</code></p>
+          <div class="columns">
+            <div class="column"><div class="fr-row">
+              <div class="fr-head"><span class="fr-name">EGO-CENTRIC</span><span class="fr-score">88.1%</span></div>
+              <p class="fr-text">Interpret all spatial directions from the CAMERA’s viewpoint — as you, the observer, see the scene. “Right of X” = to your right of object X in the image.</p>
+            </div></div>
+            <div class="column"><div class="fr-row obj">
+              <div class="fr-head"><span class="fr-name">OBJECT-CENTRIC <span class="chosen">● our choice</span></span><span class="fr-score">88.1%</span></div>
+              <p class="fr-text">Interpret all spatial directions from the REFERENCE OBJECT’s own perspective — as if you stood at the object, looking outward in its natural front-facing direction. “Right of X” = to X’s own right side.</p>
+            </div></div>
+            <div class="column"><div class="fr-row">
+              <div class="fr-head"><span class="fr-name">WORLD-CENTRIC</span><span class="fr-score">89.8%</span></div>
+              <p class="fr-text">Interpret all spatial directions in the WORLD frame — consistent world-axis conventions, independent of the camera or the object’s orientation.</p>
+            </div></div>
+          </div>
+          <p class="cap has-text-centered" style="margin-top:.5rem;">Naming <i>any</i> frame is the win (+6.8 pt over no-frame, 81.4 → 88.1); <i>which</i> frame barely matters (1.7 pt spread).</p>
+
+          <div style="margin-top:1.9rem;">
+            <p class="opt-label" style="margin-bottom:.4rem;">How adding the frame instruction to the prompt changed the reasoning</p>
+            <p class="cap has-text-centered" style="margin-bottom:1rem;max-width:820px;margin-left:auto;margin-right:auto;">Revisiting the same two examples from the Problem — not as proof (the aggregate +6.8 pt is that), but to see how the one-line frame instruction <b>shifts the model’s behavior</b>: from literal label-matching to relative, perspective-based reasoning that re-verifies before committing.</p>
+            <div class="columns">
+              <div class="column is-6"><div class="block-card" style="box-shadow:none;">
+                <p style="margin-bottom:.5rem;"><b>“Is the monitor <u>behind</u> the sofa?”</b></p>
+                <div class="columns is-mobile is-vcentered">
+                  <div class="column is-5" style="padding:.4rem;"><figure><img src="figs/config/case1.png"></figure></div>
+                  <div class="column is-7" style="padding:.4rem;">
+                    <p class="quote" style="border-left-color:var(--red);"><span class="no">Default → No ✗</span> — “…the monitor is not behind the sofa; it’s to the side.”</p>
+                    <p class="quote after"><span class="yes">+ Object frame → Yes ✓</span><br>“…<span class="hl">from the sofa’s perspective, what’s behind it?</span> The <span class="hl">sofa is facing the left</span> (the coffee table is in front of it), so <span class="hl">the back of the sofa is towards the desk</span>… the desk is <span class="hl">behind the sofa</span>. So <span class="hl">the monitor is behind it.</span> The answer is yes.”</p>
+                  </div>
+                </div>
+              </div></div>
+              <div class="column is-6"><div class="block-card" style="box-shadow:none;">
+                <p style="margin-bottom:.5rem;"><b>“Is the microwave <u>above</u> the counter?”</b></p>
+                <div class="columns is-mobile is-vcentered">
+                  <div class="column is-5" style="padding:.4rem;"><figure><img src="figs/config/case2.png"></figure></div>
+                  <div class="column is-7" style="padding:.4rem;">
+                    <p class="quote" style="border-left-color:var(--red);"><span class="no">Default → No ✗</span> — “…it’s not above the counter; it’s on the counter.”</p>
+                    <p class="quote after"><span class="yes">+ Object frame → Yes ✓</span><br>“…<span class="hl">from the microwave’s perspective</span>, the <span class="hl">microwave is on top of the counter</span>, meaning <span class="hl">the counter is below</span> it. So <span class="hl">if the microwave is on the counter, then yes, it’s above the counter.</span> The answer is yes.”</p>
+                  </div>
+                </div>
+              </div></div>
+            </div>
+          </div>
+            </div><!-- /subpanel ① name-the-frame -->
+            <div class="subpanel" data-i="1">
+              <p class="opt-label has-text-centered" style="margin-bottom:.3rem;">A second, independent failure — the final answer disagrees with the model’s own reasoning</p>
+              <p class="cap has-text-centered" style="margin-bottom:1.4rem;max-width:820px;margin-left:auto;margin-right:auto;">Independent of the frame: the model reasons its way to “Yes,” then emits “No” as the final token. Fix: when the final token disagrees with the reasoning, trust the reasoning.</p>
+              <div class="columns">
+                <div class="column is-6"><div class="block-card" style="box-shadow:none;">
+                  <span class="pill p">Problem</span>
+                  <p style="margin:.5rem 0 .6rem;">The model reasons to a conclusion, then the <b>final Yes/No token contradicts it</b>.</p>
+                  <figure style="margin:.2rem 0 .6rem;"><img src="figs/config/parser_example.png"></figure>
+                  <p class="cap"><b>Rare &amp; strictly one-sided:</b> Config 4/123 disagreements, reasoning right 4/4; Compat 3/105, right 3/3. The stray token only over-rejects — never adds a wrong “Yes.”</p>
+                </div></div>
+                <div class="column is-6"><div class="block-card" style="box-shadow:none;">
+                  <span class="pill f">Solution</span>
+                  <p style="margin:.5rem 0 .7rem;">When they disagree, <b>take the reasoning’s conclusion</b>.</p>
+                  <pre class="rule"><code>final = yes/no token after &lt;/think&gt;
+conc  = last yes/no inside reasoning
+if final != conc:
+    answer = conc   # trust reasoning
+else:
+    answer = final</code></pre>
+                  <figure style="margin-top:.7rem;"><img src="figs/config/parser_gain.png"></figure>
+                  <p class="cap has-text-centered" style="margin-top:.3rem;">Lifts every frame; object <b>88.1 → 91.5</b> (submitted).</p>
+                </div></div>
+              </div>
+            </div>
+            <div class="subpanel" data-i="2">
+              <p class="opt-label has-text-centered" style="margin-bottom:.3rem;">Decoding: greedy — the mirror image of Compatibility</p>
+              <p class="cap has-text-centered" style="margin-bottom:1.1rem;max-width:840px;margin-left:auto;margin-right:auto;">Sampling helps Compatibility (recovers “No”) but <b>hurts Configuration</b> — it re-opens the over-rejection the frame just fixed, so we commit with <b>greedy</b>.</p>
+              <div class="columns is-vcentered">
+                <div class="column is-5">
+                  <table class="table is-fullwidth is-narrow" style="font-size:.86rem;">
+                    <thead><tr style="background:var(--navy);"><th style="color:#fff;">Decoding</th><th style="color:#fff;text-align:right;">Micro</th><th style="color:#fff;text-align:right;">Yes-rec</th><th style="color:#fff;text-align:right;">No-rec</th><th style="color:#fff;text-align:right;">Macro</th></tr></thead>
+                    <tbody>
+                      <tr style="background:#e9f4ea;"><td><b>greedy</b> ✓</td><td class="has-text-right"><b>91.5</b></td><td class="has-text-right">90.3</td><td class="has-text-right">93.5</td><td class="has-text-right"><b>91.9</b></td></tr>
+                      <tr><td>sampling</td><td class="has-text-right">79.7</td><td class="has-text-right"><span class="r">75.0</span></td><td class="has-text-right">87.0</td><td class="has-text-right">81.0</td></tr>
+                    </tbody>
+                  </table>
+                  <p class="cap">Sampling drops <span class="r">Yes-recall 90.3 → 75.0</span> — over-rejection returns → Micro <b>−11.9</b>, Macro <b>−10.9</b>. <span class="cap">(official harness, n=118)</span></p>
+                </div>
+                <div class="column is-7"><figure><img src="figs/config/config_decoding.png"></figure></div>
+              </div>
+            </div>
+          </div><!-- /subtabs (Solution) -->
+        </div>
+        <div class="panel" data-i="2" style="width:100%;">
+          <p class="opt-label has-text-centered" style="margin-bottom:.3rem;">Naming a frame changes the reasoning — but it isn’t perspective-taking</p>
+          <p class="cap has-text-centered" style="margin-bottom:1.4rem;max-width:820px;margin-left:auto;margin-right:auto;">The frame helps by inducing more careful, relative reasoning — not by actually adopting the frame’s viewpoint.</p>
+
+          <div class="subtabs" id="cfg-insight-tabs">
+            <div class="subtab-bar">
+              <button class="subtab" data-i="0">1 · Reasons more, carefully</button>
+              <button class="subtab" data-i="1">2 · Not perspective-taking</button>
+              <button class="subtab" data-i="2">3 · Longer ≠ better</button>
+            </div>
+
+            <div class="subpanel" data-i="0">
+              <p class="cap has-text-centered" style="margin-bottom:1.3rem;max-width:820px;margin-left:auto;margin-right:auto;">Naming a frame makes the model reason <b>~2.5× longer on its own</b> (median 252 → 640 chars, same 768-token budget). Here is what that extra reasoning contains — and which parts actually helped.</p>
+
+              <div class="columns is-vcentered" style="margin-bottom:.4rem;">
+                <div class="column is-7"><figure><img src="figs/config/len_kde.png"></figure></div>
+                <div class="column is-5"><p><b>① It reasons longer</b> — same token budget, but the object frame pushes reasoning length up ~2.5× (252 → 640 chars).</p></div>
+              </div>
+
+              <div class="columns is-vcentered" style="margin-bottom:.4rem;">
+                <div class="column is-5"><p style="margin-bottom:.5rem;"><b>② Each frame surfaces its own vocabulary</b> — ego → “camera / viewpoint”, object → “reference / relative”, world → “axis / world”. The model <b>echoes whichever frame it’s given</b>, plus a shared planning idiom (“Got it, let’s figure this out”).</p>
+                  <p class="cap" style="background:#f5f6f8;border-radius:6px;padding:.55rem .7rem;"><b>How the score is computed.</b> From every reasoning trace we count each uni/bi-gram’s rate <b>per 1,000 words</b> (so a long or repetitive trace can’t dominate), average that rate across questions (keeping terms seen in <b>≥6</b> questions), then plot the <b>log-ratio</b> of the frame’s rate vs no-frame. Higher = the frame says it more.</p></div>
+                <div class="column is-7"><figure><img src="figs/config/distinctive_terms.png"></figure></div>
+              </div>
+
+              <div class="columns is-vcentered" style="margin-bottom:.6rem;">
+                <div class="column is-7"><figure><img src="figs/config/behavior_cats.png"></figure></div>
+                <div class="column is-5"><p><b>③ Grouped into 5 behavior types</b> — a frame sharply raises <span class="b">Planning / decomposition (17 → 95%)</span>, with more self-correction, verification, and relative-axis reasoning.</p></div>
+              </div>
+
+              <div class="block-card" style="background:#f0f7f0;border-color:var(--green);box-shadow:none;text-align:center;">
+                <p><b>Which of these helped?</b> The gain is specifically <a href="#cfg-insight-tabs" onclick="document.querySelector('#cfg-insight-tabs .subtab[data-i=&quot;2&quot;]').click();return false;" style="color:var(--green);text-decoration:underline;cursor:pointer;">fewer over-rejections (false-“No” 25 → 12)</a>, with <b>no new false “Yes”</b> — the extra reasoning rescues cases it used to wrongly reject. <span class="cap">(see <a href="#cfg-insight-tabs" onclick="document.querySelector('#cfg-insight-tabs .subtab[data-i=&quot;2&quot;]').click();return false;" style="color:var(--green);cursor:pointer;">tab 3 →</a>)</span></p>
+              </div>
+            </div>
+
+            <div class="subpanel" data-i="1"><div class="columns is-vcentered is-centered">
+              <div class="column is-4"><figure><img src="figs/config/venn.png" style="margin:0 1.25rem 0 auto;max-height:340px;display:block;"></figure></div>
+              <div class="column is-5">
+                <p class="step-lead" style="margin-bottom:.5rem;"><b>Not real perspective-taking.</b></p>
+                <p style="margin-bottom:.5rem;">Ego / object / world frames agree on <b>91% (112/123)</b> of answers — the specific frame barely changes the prediction (1.7 pt).</p>
+                <p style="margin-bottom:.5rem;"><b>Why?</b> (1) <b>48%</b> of questions use frame-independent relations — <span class="b">above / below</span> (vertical / gravity) give the same answer in any frame; only the other 52% (left/right, front/behind) flip with viewpoint.</p>
+                <p style="margin-bottom:.5rem;">(2) The model was <b>never trained on explicit frame instructions</b>, so it doesn’t actually adopt the object’s viewpoint — it reasons more, but not <i>from</i> the frame.</p>
+                <p style="background:#eef1f6;border-radius:5px;padding:.5rem .7rem;"><b>→ The frame’s real effect is disciplining the reasoning</b> (stop literal-matching), not perspective-taking.</p>
+              </div>
+            </div></div>
+
+            <div class="subpanel" data-i="2">
+              <div class="columns is-vcentered" style="margin-bottom:.5rem;">
+                <div class="column is-7"><figure><img src="figs/config/longer_box.png"></figure></div>
+                <div class="column is-5"><p class="step-lead" style="margin-bottom:.5rem;"><b>Longer ≠ better.</b></p>
+                  <p>Wrong answers are <b>as long or longer</b> than correct ones — reasoning length tracks <span class="r">difficulty</span>, not correctness.</p></div>
+              </div>
+              <div class="columns is-vcentered">
+                <div class="column is-5"><p class="step-lead" style="margin-bottom:.5rem;"><b>So what really improved?</b></p>
+                  <p>The gain is one-sided: <span class="g">+13 over-rejections fixed</span> on the “Yes” side (false-“No” 25 → 12), with <b>no change</b> on the “No” side — no new false “Yes”. The extra reasoning only rescues cases it used to wrongly reject.</p>
+                  </div>
+                <div class="column is-7"><figure><img src="figs/config/confusion_beforeafter.png"></figure></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:2.2rem;padding-top:1.5rem;border-top:1px solid #e7e7e7;">
+      <p class="opt-label has-text-centered" style="margin-bottom:.9rem;">Final result — the two fixes stack to 91.5%</p>
+      <div class="columns is-vcentered">
+        <div class="column is-7"><figure><img src="figs/config/config_gain_waterfall.png" style="max-height:440px;width:auto;margin:0 auto;display:block;"></figure></div>
+        <div class="column is-5">
+          <p style="margin-bottom:.5rem;"><b>81.4%</b> default → <span class="g">+6.8</span> object frame → <span class="g">+3.4</span> parser → <b>91.5%</b>.</p>
+          <p class="cap">Net <b>+10.2 pt</b>, official harness (n=118). The frame does the heavy lifting; the parser is a clean, low-risk top-up.</p>
+        </div>
+      </div>
+      <div class="columns is-vcentered" style="margin-top:.8rem;border-top:1px dashed #e7e7e7;padding-top:1.3rem;">
+        <div class="column is-5">
+          <p class="opt-label" style="margin-bottom:.4rem;">Balanced under class imbalance — not a Yes-prior</p>
+          <p style="margin-bottom:.5rem;">Configuration GT is <b>61% Yes</b>, so a Yes-bias could inflate raw accuracy. It doesn’t: <span class="g">No-recall 93.5%</span> is even higher than <span class="g">Yes-recall 90.3%</span>, so the <b>Yes/No balanced macro is 91.9%</b> — matching raw <b>91.5%</b>.</p>
+          <p style="margin-bottom:.5rem;">The whole gain is <b>Yes-recall</b> (<span class="g">73.6 → 90.3</span>); No-recall never moves off 93.5. The frame fixes <b>over-rejection</b> — the opposite of a Yes-prior.</p>
+          <p class="cap">A blind-“Yes” baseline gets 61% raw but only <b>50% balanced</b>. That gap is the real spatial skill.</p>
+        </div>
+        <div class="column is-7"><figure><img src="figs/config/config_macro.png" style="max-height:380px;width:auto;margin:0 auto;display:block;"></figure></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TASK 2: COMPATIBILITY -->
+<section id="compat" class="section">
+  <div class="container">
+    <p class="kicker" style="margin-bottom:.5rem;">Task 2</p>
+    <h2 class="title is-3 sec-title" style="margin-bottom:.7rem;"><span class="task-badge">Compatibility</span>&nbsp;&nbsp;Fit yes/no&nbsp;&nbsp;<span class="tag is-dark is-medium" style="vertical-align:middle;">79.1%</span></h2>
+    <p class="is-size-6" style="color:#666;margin-bottom:.9rem;">“Does the object fit in that space?” — a Yes-heavy split (83%) where raw accuracy is gameable.</p>
+    <p style="margin-bottom:2.2rem;"><span class="model-chip"><span class="mc-label">Base model</span> <b>Qwen3-VL-32B-Thinking</b> <span class="mc-role">· reasoner</span></span></p>
+    <div class="carousel">
+      <div class="cards-arrows">
+        <button class="arrow prev" aria-label="prev">‹</button>
+        <div class="columns" style="flex:1;margin:0;">
+          <div class="column is-4"><div class="block-card step-card p active" data-i="0"><span class="pill p">Candidates &amp; Challenges</span>
+            <p style="margin-top:.5rem;">Across candidates (Instruct/Thinking × greedy/sampling), the <b>83%-Yes</b> split makes <b>raw gameable</b> — a blind “Yes” scores 82.9% raw but 50 balanced; models lean on a prior.</p></div></div>
+          <div class="column is-4"><div class="block-card step-card f" data-i="1"><span class="pill f">Strategy</span>
+            <p style="margin-top:.5rem;">Optimize <b>balanced</b> accuracy: a <b>reasoning</b> model, <b>no-frame</b>, <b>sampling</b> decoding (recovers “No”), plus a <b>reasoning-trust parser</b>.</p></div></div>
+          <div class="column is-4"><div class="block-card step-card i" data-i="2"><span class="pill i">Findings</span>
+            <p style="margin-top:.5rem;">Sampling <b>grounds</b> the answer in real size / clearance instead of a fluent “it fits” — balanced skill rises <b>66 → 74</b>.</p></div></div>
+        </div>
+        <button class="arrow next" aria-label="next">›</button>
+      </div>
+      <div class="detail">
+        <div class="panel active" data-i="0">
+          <p class="opt-label has-text-centered" style="margin-bottom:.3rem;">Choosing the model — 105 questions, where raw is gamed by the 83% Yes-prior</p>
+          <p class="cap has-text-centered" style="margin-bottom:1.1rem;max-width:840px;margin-left:auto;margin-right:auto;">A blind “Yes” tops <b>Micro</b> (82.9) yet catches zero “No” (<b>Macro</b> 50 = chance). Only the reasoning model with sampling actually recovers “No”.</p>
+          <div class="columns is-centered">
+            <div class="column is-11">
+              <table class="table is-fullwidth is-hoverable" style="font-size:.9rem;">
+                <thead><tr style="background:var(--navy);">
+                  <th style="color:#fff;">Model</th><th style="color:#fff;text-align:right;">pred Y/N</th><th style="color:#fff;text-align:right;">Micro</th><th style="color:#fff;text-align:right;">Yes-rec</th><th style="color:#fff;text-align:right;">No-rec</th><th style="color:#fff;text-align:right;">Macro</th><th style="color:#fff;"></th>
+                </tr></thead>
+                <tbody>
+                  <tr><td>blind-Yes <span class="cap">· guess</span></td><td class="has-text-right cap">105 / 0</td><td class="has-text-right">82.9</td><td class="has-text-right">100</td><td class="has-text-right"><span class="no">0</span></td><td class="has-text-right"><b>50.0</b></td><td class="cap"><span class="r">Yes-biased · gameable</span></td></tr>
+                  <tr><td>Instruct <span class="cap">· no reasoning</span></td><td class="has-text-right cap">30 / 75</td><td class="has-text-right">41.9</td><td class="has-text-right">32</td><td class="has-text-right">89</td><td class="has-text-right"><b>60.5</b></td><td class="cap"><span class="r">No-biased</span></td></tr>
+                  <tr><td>Thinking · greedy</td><td class="has-text-right cap">78 / 27</td><td class="has-text-right">77.1</td><td class="has-text-right">83</td><td class="has-text-right">50</td><td class="has-text-right"><b>66.4</b></td><td class="cap" style="color:#d08a00;">Misses ½ of No</td></tr>
+                  <tr style="background:#e9f4ea;"><td><b>✓ Thinking · sampling</b> <span class="cap">· submitted</span></td><td class="has-text-right cap">74 / 31</td><td class="has-text-right"><b>79.0</b></td><td class="has-text-right">82</td><td class="has-text-right"><b>67</b></td><td class="has-text-right" style="color:var(--green);"><b>74.1</b></td><td class="cap"><span class="g">Most balanced</span></td></tr>
+                </tbody>
+              </table>
+              <div class="columns" style="margin-top:.3rem;">
+                <div class="column is-4"><p class="cap"><b>Raw is gameable</b> — blind-Yes tops Micro (82.9) yet catches <span class="no">zero “No”</span> (Macro 50 = chance).</p></div>
+                <div class="column is-4"><p class="cap"><b>Reasoning?</b> Instruct (no reasoning) is stuck on a <b>strong No-prior</b>; <b>Thinking</b> reasons instead of defaulting to a prior → far more balanced.</p></div>
+                <div class="column is-4"><p class="cap"><b>Greedy or sampling?</b> Sampling recovers more “No” — No-recall <span class="g">50 → 67</span>, balanced 66 → 74.</p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="panel" data-i="1" style="width:100%;">
+          <div class="subtabs">
+            <div class="subtab-bar">
+              <button class="subtab" data-i="0">① Sampling</button>
+              <button class="subtab" data-i="1">② Fix parser</button>
+              <button class="subtab" data-i="2">③ Frame: none</button>
+            </div>
+            <div class="subpanel" data-i="0">
+              <p class="opt-label has-text-centered" style="margin-bottom:.4rem;">Sampling grounds the answer in the scene — greedy just asserts a fluent conclusion</p>
+              <p class="cap has-text-centered" style="margin-bottom:1.1rem;max-width:840px;margin-left:auto;margin-right:auto;">It checks <b>occupancy</b> and <b>size</b> — fixing both directions. No-recall <span class="g">50 → 67</span>, balanced <span class="g">66.4 → 74.1</span> (raw 77.1 → 79.0).</p>
+              <div class="columns">
+                <div class="column is-6"><div class="block-card" style="box-shadow:none;">
+                  <p style="margin-bottom:.4rem;"><b>“Can the headphone fit right of the keyboard?”</b> · GT <span class="no">No</span></p>
+                  <div class="columns is-mobile is-vcentered">
+                    <div class="column is-5" style="padding:.4rem;"><figure><img src="figs/compat_ex_occupancy.png"></figure></div>
+                    <div class="column is-7" style="padding:.4rem;">
+                      <p class="quote" style="border-left-color:var(--red);"><span class="no">Greedy → Yes ✗</span> — “If we <span class="hl">move the mouse pad</span>, the headphones <span class="hl">can fit</span>.”</p>
+                      <p class="quote after" style="margin-top:.4rem;"><span class="yes">Sampling → No ✓</span> — “The mouse pad is <span class="g">already there</span>, <span class="g">taking that space</span>, so they <span class="g">can’t fit</span>.”</p>
+                    </div>
+                  </div>
+                </div></div>
+                <div class="column is-6"><div class="block-card" style="box-shadow:none;">
+                  <p style="margin-bottom:.4rem;"><b>“Can the wok fit above the fridge?”</b> · GT <span class="yes">Yes</span></p>
+                  <div class="columns is-mobile is-vcentered">
+                    <div class="column is-5" style="padding:.4rem;"><figure><img src="figs/compat_ex_size.png"></figure></div>
+                    <div class="column is-7" style="padding:.4rem;">
+                      <p class="quote" style="border-left-color:var(--red);"><span class="no">Greedy → No ✗</span> — “The wok is probably <span class="hl">too big</span> … <span class="hl">can’t fit</span>.”</p>
+                      <p class="quote after" style="margin-top:.4rem;"><span class="yes">Sampling → Yes ✓</span> — “The wok is about <span class="g">the size of one burner</span>; the fridge top is <span class="g">wider than</span> it, so it <span class="g">can fit</span>.”</p>
+                    </div>
+                  </div>
+                </div></div>
+              </div>
+            </div>
+            <div class="subpanel" data-i="1">
+              <p class="opt-label has-text-centered" style="margin-bottom:.9rem;">Parser — trust the reasoning when the final token disagrees</p>
+              <div class="columns is-centered">
+                <div class="column is-8"><div class="block-card" style="box-shadow:none;">
+                  <p style="margin-bottom:.6rem;">The same reasoning-trust parser as Configuration: when the final Yes/No token contradicts the reasoning’s conclusion, take the reasoning.</p>
+                  <pre class="rule"><code>if final != conc:
+    answer = conc   # trust reasoning
+else:
+    answer = final</code></pre>
+                  <p class="cap" style="margin-top:.6rem;">Compatibility: <b>3 / 105</b> disagreements, reasoning right <span class="g">3 / 3</span> → <b>+2.9</b> raw (76.2 → 79.0). One-sided — it never adds a wrong “Yes”.</p>
+                </div></div>
+              </div>
+            </div>
+            <div class="subpanel" data-i="2">
+              <p class="opt-label has-text-centered" style="margin-bottom:.3rem;">Frame: none — the frame prompt that wins Config <i>hurts</i> Compat</p>
+              <p class="cap has-text-centered" style="margin-bottom:1.2rem;max-width:840px;margin-left:auto;margin-right:auto;">Here we use <b>no frame</b>. The same one-line reference-frame instruction that gains <span class="g">+10.6 on Configuration</span> loses up to <span class="r">−26 on Compatibility</span>.</p>
+              <div class="columns is-vcentered">
+                <div class="column is-7"><figure><img src="figs/compat_frames_bar.png"></figure></div>
+                <div class="column is-5">
+                  <p style="margin-bottom:.5rem;"><b>No-frame is best</b> (79.0). Every frame prompt drags accuracy down — object-centric falls to <span class="r">51.4</span> (−27.6).</p>
+                  <p style="margin-bottom:.5rem;"><b>Why it flips:</b> Configuration asks <i>which direction</i> (needs a frame); Compatibility asks <i>does it fit</i> — size and free space barely depend on viewpoint, so a frame only drags the reasoning into perspective-taking it doesn’t need.</p>
+                  <p style="background:#eef1f6;border-radius:5px;padding:.5rem .7rem;"><b>→ Fixes are per-task, not a universal recipe.</b></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="panel" data-i="2" style="width:100%;">
+          <p class="opt-label has-text-centered" style="margin-bottom:.3rem;">What sampling changes inside the reasoning trace</p>
+          <p class="cap has-text-centered" style="margin-bottom:1.4rem;max-width:860px;margin-left:auto;margin-right:auto;">A data-driven read of 105 × 2 traces (greedy vs sampling): every uni/bi-gram counted as a <b>per-1,000-word rate per question</b> (so a long or repetitive trace can’t dominate), keeping terms seen in <b>≥6</b> questions.</p>
+          <div class="subtabs">
+            <div class="subtab-bar">
+              <button class="subtab" data-i="0">1 · Characteristic words</button>
+              <button class="subtab" data-i="1">2 · Behavior categories</button>
+              <button class="subtab" data-i="2">3 · A decision reshuffle</button>
+              <button class="subtab" data-i="3">4 · What predicts a wrong answer</button>
+            </div>
+            <div class="subpanel" data-i="0">
+              <p class="cap has-text-centered" style="margin-bottom:1rem;max-width:860px;margin-left:auto;margin-right:auto;">Terms most characteristic of each decoding (<b>log-ratio</b> of per-1k rate — distinguishing, not most-frequent). Greedy <b>asserts then wavers</b>; sampling <b>visualizes and checks</b>.</p>
+              <figure><img src="figs/compat_words.png"></figure>
+              <div class="columns" style="margin-top:.6rem;">
+                <div class="column is-6"><p class="quote" style="border-left-color:var(--red);"><b>Greedy</b> — “let’s compare”, “probably enough… <span class="hl">wait</span>”, “around feet”, “rough” → optimistic assertion, then second-guessing.</p></div>
+                <div class="column is-6"><p class="quote" style="border-left-color:#2e7d32;"><b>Sampling</b> — “compared”, “looks like”, “it’s already”, “imagine”, “too small” → visualizes the scene and checks occupancy.</p></div>
+              </div>
+            </div>
+            <div class="subpanel" data-i="1">
+              <div class="columns is-vcentered">
+                <div class="column is-7"><figure><img src="figs/compat_behaviors.png"></figure></div>
+                <div class="column is-5">
+                  <p style="margin-bottom:.5rem;">Grouping the terms into behaviors: sampling does more <b>visualizing</b> (×2.5), <b>size reasoning</b> (×2.0) and <b>space-status checking</b> (×2.0); greedy does more <b>optimistic assertion</b> and <b>rough eyeballing</b> (×3.8).</p>
+                  <p class="cap">The “…<b>wait</b>” waver is <b>identical</b> (2.13 = 2.13) — that spiral is decoding-independent. Sampling’s edge is the <b>grounding</b>, not less hesitation.</p>
+                </div>
+              </div>
+              <div class="columns is-centered" style="margin-top:.5rem;">
+                <div class="column is-11">
+                  <table class="table is-fullwidth is-narrow" style="font-size:.82rem;">
+                    <thead><tr style="background:var(--navy);">
+                      <th style="color:#fff;">Category</th><th style="color:#fff;text-align:center;">Side</th><th style="color:#fff;">Meaning</th><th style="color:#fff;">Examples (top-30 terms)</th>
+                    </tr></thead>
+                    <tbody>
+                      <tr><td><b>Visualize / imagine</b></td><td class="has-text-centered"><b class="g">S</b></td><td>Mentally simulating the scene</td><td class="cap">“looks like”, “imagine”, “physically”</td></tr>
+                      <tr><td><b>Size reasoning</b> <span class="cap">(compare / typical)</span></td><td class="has-text-centered"><b class="g">S</b></td><td>Comparing sizes, recalling typical sizes</td><td class="cap">“compared”, “typical”, “say, 18 inches”, “too small”</td></tr>
+                      <tr><td><b>Space-status check</b> <span class="cap">(occupancy / free)</span></td><td class="has-text-centered"><b class="g">S</b></td><td>Is the spot taken — or actually free?</td><td class="cap">“it’s already there”, “taking that space”, “have space”</td></tr>
+                      <tr><td><b>Optimistic assertion</b></td><td class="has-text-centered"><b class="r">G</b></td><td>Asserting there is room without checking</td><td class="cap">“probably enough”, “has some”, “big enough”</td></tr>
+                      <tr><td><b>Assert-then-waver</b> <span class="cap">(…wait)</span></td><td class="has-text-centered"><b class="r">G</b></td><td>Asserting, then immediately backtracking</td><td class="cap">“…enough— wait”, “…wall— wait”</td></tr>
+                      <tr><td><b>Rough eyeballing</b></td><td class="has-text-centered"><b class="r">G</b></td><td>Loose numeric guesses / vague layout talk</td><td class="cap">“around 3-4 feet”, “maybe 2 feet”, “layout”</td></tr>
+                    </tbody>
+                  </table>
+                  <p class="cap has-text-centered" style="margin-top:.2rem;"><b class="g">S</b> = sampling · <b class="r">G</b> = greedy &nbsp;— categories built only from the top-30 distinctive terms.</p>
+                </div>
+              </div>
+            </div>
+            <div class="subpanel" data-i="2">
+              <div class="columns is-vcentered">
+                <div class="column is-5">
+                  <p style="margin-bottom:.5rem;">Sampling isn’t “better reasoning” — it <b>re-decides 18 / 105</b> of greedy’s answers, and the reshuffle lands on the <b>minority “No”</b> class: balanced <span class="g">66 → 74</span>.</p>
+                  <p style="background:#eef1f6;border-radius:5px;padding:.5rem .7rem;">Crucially, <b>zero new wrong “Yes”</b> — a shift of the decision balance, not raw capability.</p>
+                </div>
+                <div class="column is-7"><figure><img src="figs/compat_flip_accounting.png"></figure></div>
+              </div>
+            </div>
+            <div class="subpanel" data-i="3">
+              <figure><img src="figs/compat_predicts.png"></figure>
+              <div class="columns" style="margin-top:.6rem;">
+                <div class="column is-6"><p class="quote" style="border-left-color:#2e7d32;"><b>Correct traces check the space</b> — <b>space-status checking</b> and <b>size reasoning</b> run higher in correct answers, for <i>both</i> decodings (green boxes).</p></div>
+                <div class="column is-6"><p class="quote" style="border-left-color:var(--red);"><b>Wrong traces hedge</b> — “probably / might / maybe” rises in wrong answers (<b>10.4</b> vs 7.6 greedy; <b>9.7</b> vs 7.5 sampling).</p></div>
+              </div>
+              <p class="cap has-text-centered" style="margin-top:.2rem;">Decoding-independent — a free confidence signal from the trace alone (correlational, small n).</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:2.2rem;padding-top:1.5rem;border-top:1px solid #e7e7e7;">
+        <p class="opt-label has-text-centered" style="margin-bottom:.3rem;">Final result — raw is a trap; we report balanced accuracy</p>
+        <p class="cap has-text-centered" style="margin-bottom:1.2rem;max-width:860px;margin-left:auto;margin-right:auto;">The 83%-Yes split makes raw gameable — blind-Yes tops raw (82.9) yet scores chance on balanced (50). We optimize and report <b>balanced</b> accuracy.</p>
+        <div class="columns is-vcentered">
+          <div class="column is-7"><figure><img src="figs/compat_balanced.png" style="max-height:400px;width:auto;margin:0 auto;display:block;"></figure></div>
+          <div class="column is-5">
+            <p style="margin-bottom:.5rem;">Submitted: <b>Thinking · sampling</b> — raw <b>79.0</b> / <b>balanced 74.1</b> (official harness, n=105).</p>
+            <p class="cap">Lower raw than blind-Yes, far higher real skill — the gap is exactly what raw accuracy hides.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TASK 3: CONTEXT -->
+<section id="context" class="section has-background-white-bis">
+  <div class="container">
+    <p class="kicker" style="margin-bottom:.5rem;">Task 3</p>
+    <h2 class="title is-3 sec-title" style="margin-bottom:.7rem;"><span class="task-badge">Context</span>&nbsp;&nbsp;Pointing&nbsp;&nbsp;<span class="tag is-dark is-medium" style="vertical-align:middle;">78.7%</span></h2>
+    <p class="is-size-6" style="color:#666;margin-bottom:.9rem;">Point at a described region (≤2 points) — correct if a point lands inside the GT mask.</p>
+    <p style="margin-bottom:2.2rem;"><span class="model-chip"><span class="mc-label">Base models</span> <b>RoboBrain2.5-8B-MT</b> <span class="mc-role">· pointing</span> &nbsp;⊕&nbsp; <b>Qwen3-VL-32B-Thinking</b> <span class="mc-role">· reasoner</span></span></p>
+    <div class="carousel">
+      <div class="cards-arrows">
+        <button class="arrow prev" aria-label="prev">‹</button>
+        <div class="columns" style="flex:1;margin:0;">
+          <div class="column is-4"><div class="block-card step-card p active" data-i="0"><span class="pill p">Candidates &amp; Challenges</span>
+            <p style="margin-top:.5rem;">Any single model caps out — best solo <b>RoboBrain 64.8</b>, Qwen <b>59.0</b> — and the two <b>fail on different questions</b>. Members are picked from each model × decoding × frame.</p></div></div>
+          <div class="column is-4"><div class="block-card step-card f" data-i="1"><span class="pill f">Strategy</span>
+            <p style="margin-top:.5rem;"><b>Union</b> two complementary models (≤2 points): <b>RoboBrain</b> greedy·no-frame ⊕ <b>Qwen</b> sampling·object. At least one lands inside far more often.</p></div></div>
+          <div class="column is-4"><div class="block-card step-card i" data-i="2"><span class="pill i">Findings</span>
+            <p style="margin-top:.5rem;">Two failure styles — RoboBrain <span class="b">far-misses</span> (wrong region), Qwen <span class="r">near-misses</span> (right region). Reasoning helps <b>discrimination, not localization</b>.</p></div></div>
+        </div>
+        <button class="arrow next" aria-label="next">›</button>
+      </div>
+      <div class="detail">
+        <div class="panel active" data-i="0">
+          <p class="opt-label has-text-centered" style="margin-bottom:.3rem;">Every candidate we considered — model × decoding × frame (single-model, public test)</p>
+          <p class="cap has-text-centered" style="margin-bottom:1rem;max-width:860px;margin-left:auto;margin-right:auto;">Each cell = <b>micro / macro</b> (macro over the 6 relations). No single setting clears ~65 — and each model wants the <i>opposite</i> recipe.</p>
+          <div class="columns is-centered">
+            <div class="column is-11">
+              <table class="table is-fullwidth is-hoverable" style="font-size:.82rem;">
+                <thead><tr style="background:var(--navy);">
+                  <th style="color:#fff;">Model · decoding</th><th style="color:#fff;text-align:right;">no-frame</th><th style="color:#fff;text-align:right;">ego</th><th style="color:#fff;text-align:right;">object</th><th style="color:#fff;text-align:right;">world</th>
+                </tr></thead>
+                <tbody>
+                  <tr><td><b>RoboBrain</b> · greedy</td><td class="has-text-right" style="background:#e9f4ea;"><b>64.8</b> <span class="cap">/ 62.8</span></td><td class="has-text-right">62.3 <span class="cap">/ 59.7</span></td><td class="has-text-right">61.5 <span class="cap">/ 57.0</span></td><td class="has-text-right">63.9 <span class="cap">/ 61.2</span></td></tr>
+                  <tr><td>RoboBrain · sampling</td><td class="has-text-right">51.6 <span class="cap">/ 46.1</span></td><td class="has-text-right">52.5 <span class="cap">/ 48.1</span></td><td class="has-text-right">41.0 <span class="cap">/ 34.2</span></td><td class="has-text-right">41.8 <span class="cap">/ 34.7</span></td></tr>
+                  <tr><td><b>Qwen</b> · greedy</td><td class="has-text-right">52.5 <span class="cap">/ 45.0</span></td><td class="has-text-right">57.4 <span class="cap">/ 50.5</span></td><td class="has-text-right">59.8 <span class="cap">/ 52.0</span></td><td class="has-text-right">52.5 <span class="cap">/ 49.1</span></td></tr>
+                  <tr><td>Qwen · sampling</td><td class="has-text-right">47.5 <span class="cap">/ 42.8</span></td><td class="has-text-right">62.3 <span class="cap">/ 53.2</span></td><td class="has-text-right" style="background:#e9f4ea;"><b>59.0</b> <span class="cap">/ 52.7</span></td><td class="has-text-right">54.9 <span class="cap">/ 47.5</span></td></tr>
+                </tbody>
+              </table>
+              <p class="cap"><span style="background:#e9f4ea;padding:0 .3rem;border-radius:3px;">green</span> = the two submitted members (RoboBrain <b>greedy · no-frame</b>, Qwen <b>sampling · object</b>). Best single caps at <b>64.8</b> — well below the union.</p>
+            </div>
+          </div>
+          <div class="columns" style="margin-top:.3rem;">
+            <div class="column is-4"><p class="cap"><b>Single-model ceiling</b> — no setting clears ~65; general VLMs (Molmo / LLaVA / Qwen2-VL) can’t point at all (~0).</p></div>
+            <div class="column is-4"><p class="cap"><b>Opposite recipes</b> — RoboBrain wants <b>greedy · no-frame</b>; Qwen wants a <b>frame + sampling</b>. Reasoning helps Qwen but <span class="r">hurts RoboBrain</span> (−4.9).</p></div>
+            <div class="column is-4"><p class="cap"><b>Errors don’t overlap</b> — the two miss <i>different</i> questions → the opening for a <b>union</b>.</p></div>
+          </div>
+        </div>
+        <div class="panel" data-i="1" style="width:100%;">
+          <p class="has-text-centered is-size-5" style="color:var(--navy);margin-bottom:1.1rem;"><b>Two models that fail differently → their union covers more.</b></p>
+          <div class="subtabs">
+            <div class="subtab-bar">
+              <button class="subtab" data-i="0">① Union two models</button>
+              <button class="subtab" data-i="1">② Which members</button>
+              <button class="subtab" data-i="2">③ Reasoning ablation</button>
+            </div>
+            <div class="subpanel" data-i="0">
+              <p class="opt-label has-text-centered" style="margin-bottom:.9rem;">Each emits ≤2 points; correct if <i>either</i> lands inside — and they succeed on different questions</p>
+              <div class="columns is-vcentered">
+                <div class="column is-6"><figure><img src="figs/ctx_overlay_rbonly_below.png"></figure>
+                  <p class="cap has-text-centered" style="margin-top:.3rem;">“below the desk” — <b class="b">RoboBrain</b> lands inside; Qwen misses.</p></div>
+                <div class="column is-6"><figure><img src="figs/ctx_overlay_qwonly_infront.png"></figure>
+                  <p class="cap has-text-centered" style="margin-top:.3rem;">“in front” — <b class="r">Qwen</b> lands inside; RoboBrain misses.</p></div>
+              </div>
+              <p class="cap has-text-centered" style="margin-top:.4rem;max-width:820px;margin-left:auto;margin-right:auto;">Because their mistakes are uncorrelated, taking <b>both models’ points</b> (≤2 total) means one is usually inside — the union clears the best single model (64.8 → 77.9), see the final result below.</p>
+            </div>
+            <div class="subpanel" data-i="1">
+              <p class="opt-label has-text-centered" style="margin-bottom:.9rem;">Members are picked by their own accuracy — and reasoning is asymmetric</p>
+              <div class="columns is-centered" style="margin-bottom:.5rem;">
+                <div class="column is-11">
+                  <table class="table is-fullwidth is-hoverable" style="font-size:.86rem;">
+                    <thead><tr style="background:var(--navy);"><th style="color:#fff;">Union (RoboBrain ⊕ Qwen, ≤2 pts)</th><th style="color:#fff;text-align:right;">Micro</th><th style="color:#fff;text-align:right;">Macro</th><th style="color:#fff;text-align:right;">rank</th></tr></thead>
+                    <tbody>
+                      <tr style="background:#e9f4ea;"><td><b>✓ RB greedy·none ⊕ Qwen sampling·object</b></td><td class="has-text-right"><b>77.9</b></td><td class="has-text-right"><b>73.7</b></td><td class="has-text-right" style="color:var(--green);"><b>submitted · #1</b></td></tr>
+                      <tr><td>RB greedy·world ⊕ Qwen sampling·object</td><td class="has-text-right">77.0</td><td class="has-text-right">73.4</td><td class="has-text-right cap">#2</td></tr>
+                      <tr><td>RB greedy·none ⊕ Qwen sampling·ego</td><td class="has-text-right">76.2</td><td class="has-text-right">72.0</td><td class="has-text-right cap">#3</td></tr>
+                      <tr><td>RB greedy·world ⊕ Qwen sampling·ego</td><td class="has-text-right">76.2</td><td class="has-text-right">71.4</td><td class="has-text-right cap">#4</td></tr>
+                    </tbody>
+                  </table>
+                  <p class="cap">Pre-select each member by its own single-model score — RoboBrain greedy {none, world}, Qwen sampling {ego, object} — then union. Our combo is <b>#1 on both micro and macro</b>. <span class="cap">(public dev set; the submitted combo scores 78.7 / 72.3 on the official test)</span></p>
+                </div>
+              </div>
+              <div class="columns is-centered">
+                <div class="column is-9"><div class="block-card" style="box-shadow:none;">
+                  <p style="margin-bottom:.4rem;"><b>Decoding × frame, per model — each wants the opposite:</b></p>
+                  <p class="quote" style="border-left-color:#2e5fa3;"><b>RoboBrain</b> — greedy ≫ sampling (~16 pt); <b>no-frame</b> is best.</p>
+                  <p class="quote after" style="margin-top:.4rem;"><b>Qwen</b> — <b>needs a frame</b> (up to +15 pt); with a frame, sampling ≥ greedy → <b>object</b>.</p>
+                </div></div>
+              </div>
+            </div>
+            <div class="subpanel" data-i="2">
+              <p class="opt-label has-text-centered" style="margin-bottom:.3rem;">Reasoning is asymmetric — keep it ON for Qwen, OFF for RoboBrain</p>
+              <p class="cap has-text-centered" style="margin-bottom:1rem;max-width:840px;margin-left:auto;margin-right:auto;">Ablation on the submitted union: swapping <i>either</i> model’s reasoning setting <b>lowers</b> the union.</p>
+              <div class="columns is-centered">
+                <div class="column is-9">
+                  <table class="table is-fullwidth is-hoverable" style="font-size:.86rem;">
+                    <thead><tr style="background:var(--navy);"><th style="color:#fff;">Context union (≤2 pts)</th><th style="color:#fff;text-align:right;">Micro</th><th style="color:#fff;text-align:right;">Macro</th><th style="color:#fff;text-align:right;">Δ</th></tr></thead>
+                    <tbody>
+                      <tr style="background:#e9f4ea;"><td><b>✓ RoboBrain (direct) ⊕ Qwen (Thinking)</b></td><td class="has-text-right"><b>77.9</b></td><td class="has-text-right"><b>73.7</b></td><td class="has-text-right" style="color:var(--green);"><b>submitted · best</b></td></tr>
+                      <tr><td>swap Qwen → Instruct <span class="cap">(reasoning OFF)</span></td><td class="has-text-right">75.4</td><td class="has-text-right">71.5</td><td class="has-text-right"><span class="r">−2.5</span></td></tr>
+                      <tr><td>swap RoboBrain → CoT <span class="cap">(reasoning ON)</span></td><td class="has-text-right">73.0</td><td class="has-text-right">66.7</td><td class="has-text-right"><span class="r">−4.9</span></td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="columns" style="margin-top:.2rem;">
+                <div class="column is-6"><p class="cap"><span class="g">Helps Qwen</span> as a union partner — its different mistakes complement RoboBrain better (and its traces are inspectable).</p></div>
+                <div class="column is-6"><p class="cap"><span class="r">Hurts RoboBrain</span> — reasoning derails its pointing (−4.9; CoT distillation −20). → submit <b>Qwen WITH ⊕ RoboBrain WITHOUT</b>, union-optimal.</p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="panel" data-i="2" style="width:100%;">
+          <p class="opt-label has-text-centered" style="margin-bottom:.3rem;">Why the union works — two different failure styles</p>
+          <p class="cap has-text-centered" style="margin-bottom:1.4rem;max-width:860px;margin-left:auto;margin-right:auto;">Each point’s <b>signed distance</b> to the target mask, normalized by object size (&lt;0 = inside).</p>
+          <div class="subtabs">
+            <div class="subtab-bar">
+              <button class="subtab" data-i="0">1 · Far vs near misses</button>
+              <button class="subtab" data-i="1">2 · Complementary coverage</button>
+              <button class="subtab" data-i="2">3 · Why Qwen far-misses</button>
+            </div>
+            <div class="subpanel" data-i="0">
+              <div class="columns is-vcentered">
+                <div class="column is-7"><figure><img src="figs/ctx_nearmiss_dist_k.png"></figure></div>
+                <div class="column is-5">
+                  <p style="margin-bottom:.5rem;"><b class="b">RoboBrain misses far</b> — median miss ≈ 0.9 r, a cluster beyond 1.5 r → <b>wrong region</b>.</p>
+                  <p style="margin-bottom:.5rem;"><b class="r">Qwen misses near</b> — median miss ≈ 0.4 r → <b>right region, just outside</b>.</p>
+                  <p class="cap">Different error geometry is exactly what makes them complement.</p>
+                </div>
+              </div>
+              <p class="opt-label has-text-centered" style="margin:1.6rem 0 .6rem;">How we measure “far” vs “near” — signed distance to the mask</p>
+              <div class="columns is-vcentered" style="margin-top:.2rem;">
+                <div class="column is-7"><figure><img src="figs/signed_dist_diagram.png" style="width:100%;max-width:640px;margin:0 auto;display:block;"></figure></div>
+                <div class="column is-5">
+                  <div style="background:#f7f9fc;border:1px solid #e3e9f2;border-radius:12px;padding:1.4rem 1.5rem;">
+                    <p style="text-align:center;font-size:1.15rem;color:#1b2a4a;margin-bottom:.9rem;">
+                      <i>d</i>&nbsp;=&nbsp;<span style="display:inline-block;text-align:center;vertical-align:middle;">
+                        <span style="display:block;border-bottom:2px solid #1b2a4a;padding:0 .3em .1em;">distance from point to mask boundary</span>
+                        <span style="display:block;padding-top:.1em;">mask radius&nbsp;<i>r</i></span>
+                      </span>
+                    </p>
+                    <p style="text-align:center;color:#555;margin-bottom:.9rem;font-size:.98rem;">
+                      negative <b>inside</b> the mask · positive <b>outside</b><br>
+                      <i>r</i> = √(mask&nbsp;area&nbsp;/&nbsp;π) — equal-area circle, a size proxy for any shape
+                    </p>
+                    <hr style="margin:.7rem 0;border:none;border-top:1px solid #e3e9f2;">
+                    <p style="margin:.25rem 0;font-size:1.02rem;"><b style="color:#2e7d32;">HIT</b> &nbsp;·&nbsp; <i>d</i> &lt; 0</p>
+                    <p style="margin:.25rem 0;font-size:1.02rem;"><b style="color:#b5730a;">near-miss</b> &nbsp;·&nbsp; 0 ≤ <i>d</i> &lt; 0.5 <i>r</i></p>
+                    <p style="margin:.25rem 0;font-size:1.02rem;"><b style="color:#a3352d;">far-miss</b> &nbsp;·&nbsp; <i>d</i> ≥ 0.5 <i>r</i></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="subpanel" data-i="1">
+              <div class="columns is-vcentered">
+                <div class="column is-7"><figure><img src="figs/ctx_signed_scatter.png" style="max-height:520px;width:auto;margin:0 auto;display:block;"></figure></div>
+                <div class="column is-5">
+                  <p style="margin-bottom:.5rem;">Each dot is one question (x = Qwen, y = RoboBrain signed distance). <b>3 of 4 quadrants</b> are covered by at least one model inside → <span class="g">95 / 122 ≈ 78%</span>.</p>
+                  <p class="cap">The two rarely miss the same question, so the union reaches ~78% vs RoboBrain 65% / Qwen 57% alone.</p>
+                </div>
+              </div>
+            </div>
+            <div class="subpanel" data-i="2">
+              <p class="cap has-text-centered" style="margin-bottom:1rem;max-width:860px;margin-left:auto;margin-right:auto;">Reading Qwen’s <code>&lt;think&gt;</code> traces, grouped by how far the point landed (log-ratio of over-used terms).</p>
+              <p class="opt-label has-text-centered" style="margin-bottom:.7rem;">Same question type, two reasoning styles</p>
+              <div class="columns" style="margin-bottom:1.3rem;">
+                <div class="column is-6"><div class="block-card" style="box-shadow:none;">
+                  <p style="margin-bottom:.4rem;"><b class="g">HIT</b> · “vacant space <b>below</b> the table” <span class="cap">— frame-invariant, commits to a concrete location</span></p>
+                  <figure><img src="figs/ctx_ex_hit.png" style="max-height:300px;width:auto;margin:0 auto;display:block;"></figure>
+                  <p class="quote" style="border-left-color:#2e7d32;margin-top:.5rem;">“…the space below = the area <span class="hl">under the table’s surface</span>, on the carpet… around the <span class="hl">middle</span> of the table’s base. → center area under the table.”</p>
+                </div></div>
+                <div class="column is-6"><div class="block-card" style="box-shadow:none;">
+                  <p style="margin-bottom:.4rem;"><b class="r">FAR-MISS</b> · “vacant space <b>in front of</b> the mouse” <span class="cap">— frame-dependent, never commits which way is “front”</span></p>
+                  <figure><img src="figs/ctx_ex_far.png" style="max-height:300px;width:auto;margin:0 auto;display:block;"></figure>
+                  <p class="quote" style="border-left-color:var(--red);margin-top:.5rem;">“From the mouse’s perspective, in front is towards the bottom… <span class="hl">Wait</span> — its natural front-facing direction… <span class="hl">Wait, no. Wait, maybe</span> towards the keyboard… <span class="hl">Let’s think again.</span> If you are the mouse, which way is your front?” → re-decides “front” <b>~10 times</b>, never commits.</p>
+                </div></div>
+              </div>
+              <div class="columns is-vcentered">
+                <div class="column is-7"><figure><img src="figs/ctx_reasoning_terms.png"></figure></div>
+                <div class="column is-5">
+                  <p style="margin-bottom:.5rem;"><b class="g">Hits &amp; near-misses</b> do concrete geometry — “middle”, “center”, “space between”, “normalize”.</p>
+                  <p style="margin-bottom:.5rem;"><b class="r">Far-misses</b> get tangled in <b>perspective</b> (“behind”, “opposite”, “your”) and <b>second-guess</b> (“think again”, “maybe there’s”).</p>
+                </div>
+              </div>
+              <div class="columns is-vcentered" style="margin-top:.4rem;">
+                <div class="column is-5"><figure><img src="figs/ctx_reasoning_length.png"></figure></div>
+                <div class="column is-7">
+                  <p style="margin-bottom:.5rem;"><b>The failure isn’t too little thinking — it’s longer, more uncertain thinking that never resolves the frame.</b> Median length hit 388 → near 362 → <b>far 449</b> words; hedging 9.5 → 9.7 → <b>10.8</b> / 1k.</p>
+                  <p class="cap">→ Reasoning helps <b>discrimination</b> (yes/no), not <b>localization</b> (placing the point) — it keeps re-deriving “behind” instead of committing.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:2.2rem;padding-top:1.5rem;border-top:1px solid #e7e7e7;">
+        <p class="opt-label has-text-centered" style="margin-bottom:.9rem;">Final result — the union clears every single model (→ 78.7 official)</p>
+        <div class="columns is-vcentered">
+          <div class="column is-7"><figure><img src="figs/context_solo_union.png" style="max-height:420px;width:auto;margin:0 auto;display:block;"></figure></div>
+          <div class="column is-5">
+            <p style="margin-bottom:.5rem;">Best single model <b>64.8</b> → union <b>RoboBrain greedy·no-frame ⊕ Qwen sampling·object</b> = <span class="g">77.9</span> (public) · <b>78.7</b> official.</p>
+            <p class="cap">Complementary errors — not a bigger model — are the lever. #1 among candidate unions on both raw and balanced.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM -->
+<section id="team" class="section">
+  <div class="container" style="max-width:840px;">
+    <p class="kicker has-text-centered">Team</p>
+    <h2 class="title is-3 sec-title has-text-centered">Anonymous</h2>
+    <div class="has-text-centered" style="margin-top:1.4rem;">
+      <img class="avatar" src="figs/eunsu_face.png" alt="Eunsu Baek">
+      <p class="title is-5" style="margin:.9rem 0 .15rem;">Eunsu Baek</p>
+      <p class="is-size-6" style="color:#555;margin-bottom:.1rem;">Seoul National University</p>
+      <p class="cap" style="margin-bottom:.85rem;"><a href="mailto:beshu9407@snu.ac.kr" style="color:#666;">beshu9407@snu.ac.kr</a></p>
+      <div class="buttons is-centered" style="gap:.55rem;">
+        <a class="social-ic" href="https://edw2n.github.io" target="_blank" rel="noopener" title="Homepage">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.6 2.7 2.6 15.3 0 18M12 3c-2.6 2.7-2.6 15.3 0 18"/></svg></a>
+        <a class="social-ic" href="https://scholar.google.com/citations?user=VihDCUsAAAAJ" target="_blank" rel="noopener" title="Google Scholar">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3 1 9l11 6 9-4.9V17h2V9zM5 13.2V17c0 1.66 3.13 3 7 3s7-1.34 7-3v-3.8l-7 3.8z"/></svg></a>
+        <a class="social-ic" href="https://www.linkedin.com/in/eunsu-baek-4449282a9" target="_blank" rel="noopener" title="LinkedIn">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5a2.5 2.5 0 100 5 2.5 2.5 0 000-5zM3 9h4v12H3zM9 9h3.8v1.7h.06c.53-1 1.83-2.05 3.76-2.05 4.03 0 4.78 2.65 4.78 6.1V21H20.6v-5.35c0-1.28-.03-2.93-1.79-2.93-1.79 0-2.06 1.4-2.06 2.84V21H13z"/></svg></a>
+        <a class="social-ic" href="https://github.com/edw2n" target="_blank" rel="noopener" title="GitHub">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1.5a10.5 10.5 0 00-3.32 20.46c.52.1.71-.23.71-.5v-1.75c-2.9.63-3.52-1.4-3.52-1.4-.47-1.2-1.16-1.52-1.16-1.52-.95-.65.07-.64.07-.64 1.05.08 1.6 1.08 1.6 1.08.94 1.6 2.46 1.14 3.06.87.1-.68.37-1.14.67-1.4-2.32-.26-4.75-1.16-4.75-5.16 0-1.14.4-2.07 1.07-2.8-.11-.26-.47-1.32.1-2.75 0 0 .87-.28 2.87 1.07a9.9 9.9 0 015.24 0c2-1.35 2.87-1.07 2.87-1.07.57 1.43.2 2.49.1 2.75.67.73 1.07 1.66 1.07 2.8 0 4.01-2.44 4.9-4.76 5.15.38.33.72.97.72 1.96v2.9c0 .28.19.61.72.5A10.5 10.5 0 0012 1.5z"/></svg></a>
+      </div>
+    </div>
+    <h3 class="title is-5 sec-title" style="margin-top:1.5rem;">Citation</h3>
+    <pre class="cite">@misc{baek2026robospatial,
+  title  = {Eliciting Spatial Skills from Open-Weight VLMs: A Zero-Shot, Per-Task Recipe for RoboSpatial-Home},
+  author = {Baek, Eunsu},
+  year   = {2026},
+  note   = {2nd place, RoboSpatial-Home Challenge · ERA Workshop @ CVPR 2026}
+}</pre>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="content has-text-centered">
+    <p><b>RoboSpatial-Home</b> · zero-shot, open-weight spatial reasoning · ERA @ CVPR 2026 · <a href="[CODE_URL]">GitHub</a></p>
+  </div>
+</footer>
+
+<script>
+  const tabs=[...document.querySelectorAll('.nav-tab')];
+  const map=Object.fromEntries(tabs.map(t=>[t.getAttribute('href').slice(1),t]));
+  const obs=new IntersectionObserver((es)=>{es.forEach(e=>{ if(e.isIntersecting){
+    tabs.forEach(t=>t.classList.remove('active')); const t=map[e.target.id]; if(t)t.classList.add('active');}});},
+    {rootMargin:'-45% 0px -50% 0px'});
+  ['summary','config','compat','context','team'].forEach(id=>{const el=document.getElementById(id); if(el)obs.observe(el);});
+
+  // carousel: 3 cards stay visible, arrows step the active card + swap the detail figure
+  document.querySelectorAll('.carousel').forEach(c=>{
+    const cards=[...c.querySelectorAll('.step-card')], panels=[...c.querySelectorAll('.detail .panel')];
+    const prev=c.querySelector('.arrow.prev'), next=c.querySelector('.arrow.next');
+    let i=0;
+    function show(n){ i=(n+cards.length)%cards.length;   // wrap around
+      cards.forEach((p,k)=>p.classList.toggle('active',k===i));
+      panels.forEach((p,k)=>p.classList.toggle('active',k===i)); }
+    cards.forEach(p=>p.addEventListener('click',()=>show(+p.dataset.i)));
+    if(prev)prev.addEventListener('click',()=>show(i-1));
+    if(next)next.addEventListener('click',()=>show(i+1));
+    show(0);
+  });
+  // nested finding sub-tabs
+  document.querySelectorAll('.subtabs').forEach(st=>{
+    const tabs=[...st.querySelectorAll('.subtab')], panels=[...st.querySelectorAll('.subpanel')];
+    function show(n){ tabs.forEach((t,k)=>t.classList.toggle('active',k===n)); panels.forEach((p,k)=>p.classList.toggle('active',k===n)); }
+    tabs.forEach(t=>t.addEventListener('click',()=>show(+t.dataset.i)));
+    show(0);
+  });
+</script>
+</body>
+</html>
