@@ -677,7 +677,7 @@ else:
               <div class="columns is-vcentered">
                 <div class="column is-7"><figure><img src="figs/compat_behaviors.png"></figure></div>
                 <div class="column is-5">
-                  <p style="margin-bottom:.5rem;">Grouping the terms into behaviors: sampling does more <b>visualizing</b> (×2.5), <b>size reasoning</b> (×2.0) and <b>space-status checking</b> (×2.0); greedy does more <b>optimistic assertion</b> and <b>rough eyeballing</b> (×3.8).</p>
+                  <p style="margin-bottom:.5rem;">Grouping reasoning traces into behaviors: <span class="g">sampling</span> does more <b>visualizing &amp; imagine</b> (×2.5), <b>size reasoning</b> (×2.0) and <b>space-status checking</b> (×2.0); <span class="no">greedy</span> does more <b>optimistic assertion</b> and <b>rough eyeballing</b> (×3.8).</p>
                   <p class="cap">The “…<b>wait</b>” waver is <b>identical</b> (2.13 = 2.13) — that spiral is decoding-independent. Sampling’s edge is the <b>grounding</b>, not less hesitation.</p>
                 </div>
               </div>
@@ -721,13 +721,15 @@ else:
         </div>
       </div>
       <div style="margin-top:2.2rem;padding-top:1.5rem;border-top:1px solid #e7e7e7;">
-        <p class="opt-label has-text-centered" style="margin-bottom:.3rem;">Final result — raw is a trap; we report balanced accuracy</p>
+        <p class="opt-label has-text-centered" style="margin-bottom:.3rem;">Final result — the two fixes stack to 74.1 balanced (79.0 official)</p>
         <p class="cap has-text-centered" style="margin-bottom:1.2rem;max-width:860px;margin-left:auto;margin-right:auto;">The 83%-Yes split makes raw gameable — blind-Yes tops raw (82.9) yet scores chance on balanced (50). We optimize and report <b>balanced</b> accuracy.</p>
         <div class="columns is-vcentered">
-          <div class="column is-7"><figure><img src="figs/compat_balanced.png" style="max-height:400px;width:auto;margin:0 auto;display:block;"></figure></div>
-          <div class="column is-5">
-            <p style="margin-bottom:.5rem;">Submitted: <b>Thinking · sampling</b> — raw <b>79.0</b> / <b>balanced 74.1</b> (official harness, n=105).</p>
-            <p class="cap">Lower raw than blind-Yes, far higher real skill — the gap is exactly what raw accuracy hides.</p>
+          <div class="column is-8"><figure><img src="figs/compat_gain_waterfall.png" style="max-height:420px;width:auto;margin:0 auto;display:block;"></figure></div>
+          <div class="column is-4">
+            <p style="margin-bottom:.5rem;"><b>66.4</b> greedy → <span class="g">+6.0</span> sampling → <span class="g">+1.7</span> parser → <b>74.1</b>.</p>
+            <p style="margin-bottom:.5rem;"><b>+7.7 pt total</b> (66.4 → 74.1, balanced).</p>
+            <p class="cap" style="margin-bottom:.4rem;">Sampling recovers the missing “No”; the parser fixes 3/3 over-rejected “Yes”.</p>
+            <p class="cap">Micro (raw) lands at <b>79.0 (submitted)</b>.</p>
           </div>
         </div>
       </div>
