@@ -207,12 +207,12 @@
       <p class="content is-medium has-text-centered" style="color:#333;">
         We place <b>2nd</b> on RoboSpatial-Home — zero-shot, no fine-tuning — by keeping two
         open-weight models fixed and <b>eliciting</b> the spatial skills they already have.
-        A <b>reasoner</b> (Qwen3-VL-32B-Thinking) and a <b>pointing specialist</b> (RoboBrain2.5-8B)
-        are tuned per task along a few inference-time knobs — a <b>reference-frame prompt</b>,
+        A <b>reasoner</b> (Qwen3-VL-32B-Thinking) and a <b>pointing specialist</b> (RoboBrain2.5-8B-MT)
+        are combined through <b>per-task inference choices</b> — a <b>reference-frame prompt</b>,
         <b>decoding</b>, a <b>reasoning-trust parser</b>, and a complementary <b>two-model union</b>.
         The right setting is <b>task-specific</b>: the same knob that helps one task can hurt another
-        (greedy wins Configuration, sampling wins Compatibility). Every choice is read off what the
-        models reveal in their own reasoning.
+        (greedy wins Configuration, sampling wins Compatibility). Every choice is grounded in what the
+        models reveal — in their reasoning traces and in how they fail.
       </p>
     </div>
 
@@ -316,7 +316,7 @@
       </table>
       <p class="cap" style="margin-top:.5rem;line-height:1.6;">
         <b>Micro</b> (before the “/”) = plain accuracy; <b>macro</b> (after) = balanced accuracy over Yes/No for Configuration &amp; Compatibility (guards against the 83% Yes-prior), and the mean over the <b>6 spatial relations</b> (left / right / front / behind / above / below) for Context. <b>Overall</b> = mean of the three tasks; our macro overall is <b>79.4</b>.
-        Every non-grey row is <b>our own run</b> through the official harness. Neither base model alone clears ~72 — the per-task tuning and the two-model <b>union add +11.5</b>. General VLMs collapse on <b>pointing</b> (LLaVA-NeXT / Qwen2-VL ≈ 0) or on <b>Compatibility</b> (Molmo 18). Grey rows are published reference numbers for models we did not run.
+        Every non-grey row is <b>our own run</b> through RoboSpatial-Eval, the challenge’s official evaluation. Neither base model alone clears ~72 — the per-task tuning and the two-model <b>union add +11.5</b>. General VLMs collapse on <b>pointing</b> (LLaVA-NeXT / Qwen2-VL ≈ 0) or on <b>Compatibility</b> (Molmo 18). Grey rows are published reference numbers for models we did not run.
       </p>
       <p class="cap has-text-centered">Zero-shot, open-weight. Fill baseline column with leaderboard references.</p>
     </div>
@@ -457,9 +457,9 @@ else:
                       <tr><td>sampling</td><td class="has-text-right">79.7</td><td class="has-text-right"><span class="r">75.0</span></td><td class="has-text-right">87.0</td><td class="has-text-right">81.0</td></tr>
                     </tbody>
                   </table>
-                  <p class="cap">Sampling drops <span class="r">Yes-recall 90.3 → 75.0</span> — over-rejection returns → Micro <b>−11.9</b>, Macro <b>−10.9</b>. <span class="cap">(official harness, n=118)</span></p>
+                  <p class="cap">Sampling drops <span class="r">Yes-recall 90.3 → 75.0</span> — over-rejection returns → Micro <b>−11.9</b>, Macro <b>−10.9</b>. <span class="cap">(RoboSpatial-Eval, n=118)</span></p>
                 </div>
-                <div class="column is-7"><figure><img src="figs/config/config_decoding.png"></figure></div>
+                <div class="column is-7"><figure><img src="figs/config/config_decoding.png?v=2"></figure></div>
               </div>
             </div>
           </div><!-- /subtabs (Solution) -->
@@ -724,7 +724,7 @@ else:
         <p class="opt-label has-text-centered" style="margin-bottom:.3rem;">Final result — the two fixes stack to 74.1 balanced (79.0 official)</p>
         <p class="cap has-text-centered" style="margin-bottom:1.2rem;max-width:860px;margin-left:auto;margin-right:auto;">The 83%-Yes split makes raw gameable — blind-Yes tops raw (82.9) yet scores chance on balanced (50). We optimize and report <b>balanced</b> accuracy.</p>
         <div class="columns is-vcentered">
-          <div class="column is-8"><figure><img src="figs/compat_gain_waterfall.png" style="max-height:420px;width:auto;margin:0 auto;display:block;"></figure></div>
+          <div class="column is-8"><figure><img src="figs/compat_gain_waterfall.png?v=2" style="max-height:420px;width:auto;margin:0 auto;display:block;"></figure></div>
           <div class="column is-4">
             <p style="margin-bottom:.5rem;"><b>66.4</b> greedy → <span class="g">+6.0</span> sampling → <span class="g">+1.7</span> parser → <b>74.1</b>.</p>
             <p style="margin-bottom:.5rem;"><b>+7.7 pt total</b> (66.4 → 74.1, balanced).</p>
@@ -749,9 +749,9 @@ else:
         <button class="arrow prev" aria-label="prev">‹</button>
         <div class="columns" style="flex:1;margin:0;">
           <div class="column is-4"><div class="block-card step-card p active" data-i="0"><span class="pill p">Candidates &amp; Challenges</span>
-            <p style="margin-top:.5rem;">Any single model caps out — best solo <b>RoboBrain 64.8</b>, Qwen <b>59.0</b> — and the two <b>fail on different questions</b>. Members are picked from each model × decoding × frame.</p></div></div>
+            <p style="margin-top:.5rem;">A single model gives essentially <b>one point</b> (RoboBrain <b>98%</b>, Qwen <b>87%</b> single-point) — and it <b>often just misses</b>: best solo caps at <b>66.4</b>. Half the ≤2-point budget goes unused.</p></div></div>
           <div class="column is-4"><div class="block-card step-card f" data-i="1"><span class="pill f">Strategy</span>
-            <p style="margin-top:.5rem;"><b>Union</b> two complementary models (≤2 points): <b>RoboBrain</b> greedy·no-frame ⊕ <b>Qwen</b> sampling·object. At least one lands inside far more often.</p></div></div>
+            <p style="margin-top:.5rem;"><b>Union</b> two complementary models — <b>1 point from each</b> (≤2 total): <b>RoboBrain</b> greedy·no-frame ⊕ <b>Qwen</b> sampling·object. At least one lands inside far more often.</p></div></div>
           <div class="column is-4"><div class="block-card step-card i" data-i="2"><span class="pill i">Findings</span>
             <p style="margin-top:.5rem;">Two failure styles — RoboBrain <span class="b">far-misses</span> (wrong region), Qwen <span class="r">near-misses</span> (right region). Reasoning helps <b>discrimination, not localization</b>.</p></div></div>
         </div>
@@ -759,73 +759,86 @@ else:
       </div>
       <div class="detail">
         <div class="panel active" data-i="0">
-          <p class="opt-label has-text-centered" style="margin-bottom:.3rem;">Every candidate we considered — model × decoding × frame (single-model, public test)</p>
-          <p class="cap has-text-centered" style="margin-bottom:1rem;max-width:860px;margin-left:auto;margin-right:auto;">Each cell = <b>micro / macro</b> (macro over the 6 relations). No single setting clears ~65 — and each model wants the <i>opposite</i> recipe.</p>
+          <p class="opt-label has-text-centered" style="margin-bottom:.3rem;">One model, one shot — and even the best one misses a third of the time</p>
+          <p class="cap has-text-centered" style="margin-bottom:1.2rem;max-width:860px;margin-left:auto;margin-right:auto;">Single models almost always answer with a <b>single point</b>, so one wrong guess = a wrong answer — while the benchmark allows up to <b>2 points</b>.</p>
           <div class="columns is-centered">
-            <div class="column is-11">
-              <table class="table is-fullwidth is-hoverable" style="font-size:.82rem;">
-                <thead><tr style="background:var(--navy);">
-                  <th style="color:#fff;">Model · decoding</th><th style="color:#fff;text-align:right;">no-frame</th><th style="color:#fff;text-align:right;">ego</th><th style="color:#fff;text-align:right;">object</th><th style="color:#fff;text-align:right;">world</th>
-                </tr></thead>
-                <tbody>
-                  <tr><td><b>RoboBrain</b> · greedy</td><td class="has-text-right" style="background:#e9f4ea;"><b>64.8</b> <span class="cap">/ 62.8</span></td><td class="has-text-right">62.3 <span class="cap">/ 59.7</span></td><td class="has-text-right">61.5 <span class="cap">/ 57.0</span></td><td class="has-text-right">63.9 <span class="cap">/ 61.2</span></td></tr>
-                  <tr><td>RoboBrain · sampling</td><td class="has-text-right">51.6 <span class="cap">/ 46.1</span></td><td class="has-text-right">52.5 <span class="cap">/ 48.1</span></td><td class="has-text-right">41.0 <span class="cap">/ 34.2</span></td><td class="has-text-right">41.8 <span class="cap">/ 34.7</span></td></tr>
-                  <tr><td><b>Qwen</b> · greedy</td><td class="has-text-right">52.5 <span class="cap">/ 45.0</span></td><td class="has-text-right">57.4 <span class="cap">/ 50.5</span></td><td class="has-text-right">59.8 <span class="cap">/ 52.0</span></td><td class="has-text-right">52.5 <span class="cap">/ 49.1</span></td></tr>
-                  <tr><td>Qwen · sampling</td><td class="has-text-right">47.5 <span class="cap">/ 42.8</span></td><td class="has-text-right">62.3 <span class="cap">/ 53.2</span></td><td class="has-text-right" style="background:#e9f4ea;"><b>59.0</b> <span class="cap">/ 52.7</span></td><td class="has-text-right">54.9 <span class="cap">/ 47.5</span></td></tr>
-                </tbody>
-              </table>
-              <p class="cap"><span style="background:#e9f4ea;padding:0 .3rem;border-radius:3px;">green</span> = the two submitted members (RoboBrain <b>greedy · no-frame</b>, Qwen <b>sampling · object</b>). Best single caps at <b>64.8</b> — well below the union.</p>
+            <div class="column is-5"><figure><img src="figs/ctx_overlay_rbonly_below.png"></figure>
+              <p class="cap has-text-centered" style="margin-top:.3rem;">“below the desk” — <b class="r">Qwen alone gets this wrong</b> — its point lands just barely outside the region.</p></div>
+            <div class="column is-5"><figure><img src="figs/ctx_overlay_qwonly_infront.png"></figure>
+              <p class="cap has-text-centered" style="margin-top:.3rem;">“in front of the kitchen towel” — <b class="b">RoboBrain alone gets this wrong</b> — again just barely outside.</p></div>
+          </div>
+          <p class="cap has-text-centered" style="margin:.2rem auto 1.4rem;max-width:640px;">Both models aim at nearly the <b>same spot</b> — one barely inside, the other barely outside. A solo model loses these; together, <b>one of them is in</b>.</p>
+          <div class="columns">
+            <div class="column is-4">
+              <div class="block-card" style="box-shadow:none;height:100%;">
+                <p style="margin-bottom:.3rem;"><b>① One point per answer</b></p>
+                <p class="cap">RoboBrain emits a single point on <b>98%</b> of questions (120/122); Qwen on <b>87%</b>. Effectively one shot each.</p>
+              </div>
+            </div>
+            <div class="column is-4">
+              <div class="block-card" style="box-shadow:none;height:100%;">
+                <p style="margin-bottom:.3rem;"><b>② …and that shot often misses</b></p>
+                <p class="cap">Best solo: RoboBrain <b>66.4</b> · Qwen <b>61.5</b> — a miss on <b>34–39%</b> of questions, many of them <i>barely</i> outside the region.</p>
+              </div>
+            </div>
+            <div class="column is-4">
+              <div class="block-card" style="box-shadow:none;height:100%;">
+                <p style="margin-bottom:.3rem;"><b>③ Half the budget unused</b></p>
+                <p class="cap">Scoring allows <b>≤2 points</b> and counts a hit if <i>either</i> lands inside — a solo model leaves the second point on the table.</p>
+              </div>
             </div>
           </div>
           <div class="columns" style="margin-top:.3rem;">
-            <div class="column is-4"><p class="cap"><b>Single-model ceiling</b> — no setting clears ~65; general VLMs (Molmo / LLaVA / Qwen2-VL) can’t point at all (~0).</p></div>
-            <div class="column is-4"><p class="cap"><b>Opposite recipes</b> — RoboBrain wants <b>greedy · no-frame</b>; Qwen wants a <b>frame + sampling</b>. Reasoning helps Qwen but <span class="r">hurts RoboBrain</span> (−4.9).</p></div>
-            <div class="column is-4"><p class="cap"><b>Errors don’t overlap</b> — the two miss <i>different</i> questions → the opening for a <b>union</b>.</p></div>
+            <div class="column is-4"><p class="cap"><b>Single-model ceiling</b> — no model × decoding × frame setting clears ~67 (full grid in Strategy ②).</p></div>
+            <div class="column is-4"><p class="cap"><b>Errors don’t overlap</b> — the two miss <i>different</i> questions.</p></div>
+            <div class="column is-4"><p class="cap"><b>The opening</b> — an unused second point + uncorrelated misses → <b>union</b>.</p></div>
           </div>
         </div>
         <div class="panel" data-i="1" style="width:100%;">
-          <p class="has-text-centered is-size-5" style="color:var(--navy);margin-bottom:1.1rem;"><b>Two models that fail differently → their union covers more.</b></p>
+          <p class="has-text-centered is-size-5" style="color:var(--navy);margin-bottom:.4rem;"><b>Use both points: submit RoboBrain’s ⊕ Qwen’s</b> — no averaging, no picking a winner; correct if <b>either</b> lands inside.</p>
+          <p class="cap has-text-centered" style="margin:0 auto 1.4rem;max-width:720px;">Best solo <b>66.4</b> → union <b><span class="g">78.7</span></b> (+12.3, scored with RoboSpatial-Eval). <i>Why</i> two points cover so much more — the error geometry — is in <b>Findings</b> below.</p>
           <div class="subtabs">
             <div class="subtab-bar">
-              <button class="subtab" data-i="0">① Union two models</button>
-              <button class="subtab" data-i="1">② Which members</button>
-              <button class="subtab" data-i="2">③ Reasoning ablation</button>
+              <button class="subtab" data-i="0">① How we chose the members</button>
+              <button class="subtab" data-i="1">② Reasoning ablation</button>
             </div>
             <div class="subpanel" data-i="0">
-              <p class="opt-label has-text-centered" style="margin-bottom:.9rem;">Each emits ≤2 points; correct if <i>either</i> lands inside — and they succeed on different questions</p>
-              <div class="columns is-vcentered">
-                <div class="column is-6"><figure><img src="figs/ctx_overlay_rbonly_below.png"></figure>
-                  <p class="cap has-text-centered" style="margin-top:.3rem;">“below the desk” — <b class="b">RoboBrain</b> lands inside; Qwen misses.</p></div>
-                <div class="column is-6"><figure><img src="figs/ctx_overlay_qwonly_infront.png"></figure>
-                  <p class="cap has-text-centered" style="margin-top:.3rem;">“in front” — <b class="r">Qwen</b> lands inside; RoboBrain misses.</p></div>
+              <p class="opt-label has-text-centered" style="margin-bottom:.3rem;">Step 1 — sweep each model solo (model × decoding × frame), keep its best settings</p>
+              <p class="cap has-text-centered" style="margin-bottom:1rem;max-width:860px;margin-left:auto;margin-right:auto;">Each cell = <b>micro / macro</b>. No single setting clears ~67 — and each model wants the <i>opposite</i> recipe.</p>
+              <div class="columns is-centered">
+                <div class="column is-11">
+                  <table class="table is-fullwidth is-hoverable" style="font-size:.82rem;">
+                    <thead><tr style="background:var(--navy);">
+                      <th style="color:#fff;">Model · decoding</th><th style="color:#fff;text-align:right;">no-frame</th><th style="color:#fff;text-align:right;">ego</th><th style="color:#fff;text-align:right;">object</th><th style="color:#fff;text-align:right;">world</th>
+                    </tr></thead>
+                    <tbody>
+                      <tr><td><b style="color:#2e5fa3;">RoboBrain</b> · <b style="color:#0f7b6c;">greedy</b></td><td class="has-text-right" style="background:#e9f4ea;border:2px dashed #1a7a1a;"><b>66.4</b> <span class="cap">/ 61.0</span></td><td class="has-text-right">62.3 <span class="cap">/ 56.5</span></td><td class="has-text-right">61.5 <span class="cap">/ 55.3</span></td><td class="has-text-right" style="border:2px dashed #1a7a1a;">63.9 <span class="cap">/ 58.3</span></td></tr>
+                      <tr><td><b style="color:#2e5fa3;">RoboBrain</b> · <b style="color:#8e44ad;">sampling</b></td><td class="has-text-right">50.8 <span class="cap">/ 45.0</span></td><td class="has-text-right">51.6 <span class="cap">/ 46.2</span></td><td class="has-text-right">41.0 <span class="cap">/ 36.4</span></td><td class="has-text-right">41.8 <span class="cap">/ 36.8</span></td></tr>
+                      <tr><td><b style="color:#d08a00;">Qwen</b> · <b style="color:#0f7b6c;">greedy</b></td><td class="has-text-right">52.5 <span class="cap">/ 46.3</span></td><td class="has-text-right">56.6 <span class="cap">/ 51.8</span></td><td class="has-text-right">57.4 <span class="cap">/ 49.7</span></td><td class="has-text-right">50.8 <span class="cap">/ 46.7</span></td></tr>
+                      <tr><td><b style="color:#d08a00;">Qwen</b> · <b style="color:#8e44ad;">sampling</b></td><td class="has-text-right">46.7 <span class="cap">/ 41.2</span></td><td class="has-text-right" style="border:2px dashed #1a7a1a;">61.5 <span class="cap">/ 53.0</span></td><td class="has-text-right" style="background:#e9f4ea;border:2px dashed #1a7a1a;"><b>57.4</b> <span class="cap">/ 51.9</span></td><td class="has-text-right">51.6 <span class="cap">/ 43.7</span></td></tr>
+                    </tbody>
+                  </table>
+                  <p class="cap" style="margin-bottom:.35rem;"><span style="border:2px dashed #1a7a1a;padding:0 .35rem;border-radius:3px;">dashed</span> = each model’s top-2 (kept for Step 2) · <span style="background:#e9f4ea;border:2px dashed #1a7a1a;padding:0 .35rem;border-radius:3px;">green</span> = the member the submitted union uses.</p>
+                  <p class="cap"><b style="color:#2e5fa3;">RoboBrain</b> — <b style="color:#0f7b6c;">greedy</b> ≫ <b style="color:#8e44ad;">sampling</b> (+15.6 pt), no-frame best → keep its top-2: greedy·{none, world}. &nbsp; <b style="color:#d08a00;">Qwen</b> — needs a frame (+14.8 pt), then <b style="color:#8e44ad;">sampling</b> ≥ <b style="color:#0f7b6c;">greedy</b> → keep its top-2: sampling·{ego, object}.</p>
+                </div>
               </div>
-              <p class="cap has-text-centered" style="margin-top:.4rem;max-width:820px;margin-left:auto;margin-right:auto;">Because their mistakes are uncorrelated, taking <b>both models’ points</b> (≤2 total) means one is usually inside — the union clears the best single model (64.8 → 77.9), see the final result below.</p>
-            </div>
-            <div class="subpanel" data-i="1">
-              <p class="opt-label has-text-centered" style="margin-bottom:.9rem;">Members are picked by their own accuracy — and reasoning is asymmetric</p>
-              <div class="columns is-centered" style="margin-bottom:.5rem;">
+              <p class="opt-label has-text-centered" style="margin:1.3rem 0 .3rem;">Step 2 — union every top-2 × top-2 pair, submit the best</p>
+              <div class="columns is-centered">
                 <div class="column is-11">
                   <table class="table is-fullwidth is-hoverable" style="font-size:.86rem;">
                     <thead><tr style="background:var(--navy);"><th style="color:#fff;">Union (RoboBrain ⊕ Qwen, ≤2 pts)</th><th style="color:#fff;text-align:right;">Micro</th><th style="color:#fff;text-align:right;">Macro</th><th style="color:#fff;text-align:right;">rank</th></tr></thead>
                     <tbody>
-                      <tr style="background:#e9f4ea;"><td><b>✓ RB greedy·none ⊕ Qwen sampling·object</b></td><td class="has-text-right"><b>77.9</b></td><td class="has-text-right"><b>73.7</b></td><td class="has-text-right" style="color:var(--green);"><b>submitted · #1</b></td></tr>
-                      <tr><td>RB greedy·world ⊕ Qwen sampling·object</td><td class="has-text-right">77.0</td><td class="has-text-right">73.4</td><td class="has-text-right cap">#2</td></tr>
-                      <tr><td>RB greedy·none ⊕ Qwen sampling·ego</td><td class="has-text-right">76.2</td><td class="has-text-right">72.0</td><td class="has-text-right cap">#3</td></tr>
-                      <tr><td>RB greedy·world ⊕ Qwen sampling·ego</td><td class="has-text-right">76.2</td><td class="has-text-right">71.4</td><td class="has-text-right cap">#4</td></tr>
+                      <tr style="background:#e9f4ea;"><td><b>✓ RB greedy·none ⊕ Qwen sampling·object</b></td><td class="has-text-right"><b>78.7</b></td><td class="has-text-right"><b>72.3</b></td><td class="has-text-right" style="color:var(--green);"><b>submitted · #1</b></td></tr>
+                      <tr><td>RB greedy·none ⊕ Qwen sampling·ego</td><td class="has-text-right">77.0</td><td class="has-text-right">70.3</td><td class="has-text-right cap">#2</td></tr>
+                      <tr><td>RB greedy·world ⊕ Qwen sampling·object</td><td class="has-text-right">76.2</td><td class="has-text-right">70.3</td><td class="has-text-right cap">#3</td></tr>
+                      <tr><td>RB greedy·world ⊕ Qwen sampling·ego</td><td class="has-text-right">76.2</td><td class="has-text-right">69.2</td><td class="has-text-right cap">#4</td></tr>
                     </tbody>
                   </table>
-                  <p class="cap">Pre-select each member by its own single-model score — RoboBrain greedy {none, world}, Qwen sampling {ego, object} — then union. Our combo is <b>#1 on both micro and macro</b>. <span class="cap">(public dev set; the submitted combo scores 78.7 / 72.3 on the official test)</span></p>
+                  <p class="cap">Our combo is <b>#1 on both micro and macro</b> — the members were chosen by the sweep, not by hand. <span class="cap">(all numbers scored with RoboSpatial-Eval, the challenge’s official evaluation · n=122)</span></p>
                 </div>
               </div>
-              <div class="columns is-centered">
-                <div class="column is-9"><div class="block-card" style="box-shadow:none;">
-                  <p style="margin-bottom:.4rem;"><b>Decoding × frame, per model — each wants the opposite:</b></p>
-                  <p class="quote" style="border-left-color:#2e5fa3;"><b>RoboBrain</b> — greedy ≫ sampling (~16 pt); <b>no-frame</b> is best.</p>
-                  <p class="quote after" style="margin-top:.4rem;"><b>Qwen</b> — <b>needs a frame</b> (up to +15 pt); with a frame, sampling ≥ greedy → <b>object</b>.</p>
-                </div></div>
-              </div>
             </div>
-            <div class="subpanel" data-i="2">
+            <div class="subpanel" data-i="1">
               <p class="opt-label has-text-centered" style="margin-bottom:.3rem;">Reasoning is asymmetric — keep it ON for Qwen, OFF for RoboBrain</p>
               <p class="cap has-text-centered" style="margin-bottom:1rem;max-width:840px;margin-left:auto;margin-right:auto;">Ablation on the submitted union: swapping <i>either</i> model’s reasoning setting <b>lowers</b> the union.</p>
               <div class="columns is-centered">
@@ -833,39 +846,37 @@ else:
                   <table class="table is-fullwidth is-hoverable" style="font-size:.86rem;">
                     <thead><tr style="background:var(--navy);"><th style="color:#fff;">Context union (≤2 pts)</th><th style="color:#fff;text-align:right;">Micro</th><th style="color:#fff;text-align:right;">Macro</th><th style="color:#fff;text-align:right;">Δ</th></tr></thead>
                     <tbody>
-                      <tr style="background:#e9f4ea;"><td><b>✓ RoboBrain (direct) ⊕ Qwen (Thinking)</b></td><td class="has-text-right"><b>77.9</b></td><td class="has-text-right"><b>73.7</b></td><td class="has-text-right" style="color:var(--green);"><b>submitted · best</b></td></tr>
-                      <tr><td>swap Qwen → Instruct <span class="cap">(reasoning OFF)</span></td><td class="has-text-right">75.4</td><td class="has-text-right">71.5</td><td class="has-text-right"><span class="r">−2.5</span></td></tr>
-                      <tr><td>swap RoboBrain → CoT <span class="cap">(reasoning ON)</span></td><td class="has-text-right">73.0</td><td class="has-text-right">66.7</td><td class="has-text-right"><span class="r">−4.9</span></td></tr>
+                      <tr style="background:#e9f4ea;"><td><b>✓ RoboBrain (direct) ⊕ Qwen (Thinking)</b></td><td class="has-text-right"><b>78.7</b></td><td class="has-text-right"><b>72.3</b></td><td class="has-text-right" style="color:var(--green);"><b>submitted · best</b></td></tr>
+                      <tr><td>swap Qwen → Instruct <span class="cap">(reasoning OFF)</span></td><td class="has-text-right">75.4</td><td class="has-text-right">69.2</td><td class="has-text-right"><span class="r">−3.3</span></td></tr>
+                      <tr><td>swap RoboBrain → CoT <span class="cap">(reasoning ON)</span></td><td class="has-text-right">72.1</td><td class="has-text-right">64.7</td><td class="has-text-right"><span class="r">−6.6</span></td></tr>
                     </tbody>
                   </table>
                 </div>
               </div>
               <div class="columns" style="margin-top:.2rem;">
                 <div class="column is-6"><p class="cap"><span class="g">Helps Qwen</span> as a union partner — its different mistakes complement RoboBrain better (and its traces are inspectable).</p></div>
-                <div class="column is-6"><p class="cap"><span class="r">Hurts RoboBrain</span> — reasoning derails its pointing (−4.9; CoT distillation −20). → submit <b>Qwen WITH ⊕ RoboBrain WITHOUT</b>, union-optimal.</p></div>
+                <div class="column is-6"><p class="cap"><span class="r">Hurts RoboBrain</span> — reasoning derails its pointing (−6.6; CoT distillation −20). → submit <b>Qwen WITH ⊕ RoboBrain WITHOUT</b>, union-optimal.</p></div>
               </div>
             </div>
           </div>
         </div>
         <div class="panel" data-i="2" style="width:100%;">
-          <p class="opt-label has-text-centered" style="margin-bottom:.3rem;">Why the union works — two different failure styles</p>
-          <p class="cap has-text-centered" style="margin-bottom:1.4rem;max-width:860px;margin-left:auto;margin-right:auto;">Each point’s <b>signed distance</b> to the target mask, normalized by object size (&lt;0 = inside).</p>
+          <p class="opt-label has-text-centered" style="margin-bottom:.3rem;">Why the union works — and what the remaining misses look like</p>
+          <p class="cap has-text-centered" style="margin-bottom:1.4rem;max-width:860px;margin-left:auto;margin-right:auto;">Every point is scored by its <b>signed distance</b> to the target mask, normalized by object size (&lt;0 = inside).</p>
           <div class="subtabs">
             <div class="subtab-bar">
-              <button class="subtab" data-i="0">1 · Far vs near misses</button>
-              <button class="subtab" data-i="1">2 · Complementary coverage</button>
-              <button class="subtab" data-i="2">3 · Why Qwen far-misses</button>
+              <button class="subtab" data-i="0">① Complementary coverage</button>
+              <button class="subtab" data-i="1">② Near vs far — why Qwen far-misses</button>
             </div>
             <div class="subpanel" data-i="0">
               <div class="columns is-vcentered">
-                <div class="column is-7"><figure><img src="figs/ctx_nearmiss_dist_k.png"></figure></div>
+                <div class="column is-7"><figure><img src="figs/ctx_signed_scatter.png" style="max-height:520px;width:auto;margin:0 auto;display:block;"></figure></div>
                 <div class="column is-5">
-                  <p style="margin-bottom:.5rem;"><b class="b">RoboBrain misses far</b> — median miss ≈ 0.9 r, a cluster beyond 1.5 r → <b>wrong region</b>.</p>
-                  <p style="margin-bottom:.5rem;"><b class="r">Qwen misses near</b> — median miss ≈ 0.4 r → <b>right region, just outside</b>.</p>
-                  <p class="cap">Different error geometry is exactly what makes them complement.</p>
+                  <p style="margin-bottom:.5rem;"><b>They miss different questions.</b> Each dot is one question (x = Qwen, y = RoboBrain signed distance). <b>3 of 4 quadrants</b> are covered by at least one model inside → <span class="g">95 / 122 ≈ 78%</span>.</p>
+                  <p class="cap">The two rarely miss the same question, so taking both points reaches ~78% vs RoboBrain 66% / Qwen 57% alone.</p>
                 </div>
               </div>
-              <p class="opt-label has-text-centered" style="margin:1.6rem 0 .6rem;">How we measure “far” vs “near” — signed distance to the mask</p>
+              <p class="opt-label has-text-centered" style="margin:1.6rem 0 .6rem;">How to read the axes — signed distance to the mask</p>
               <div class="columns is-vcentered" style="margin-top:.2rem;">
                 <div class="column is-7"><figure><img src="figs/signed_dist_diagram.png" style="width:100%;max-width:640px;margin:0 auto;display:block;"></figure></div>
                 <div class="column is-5">
@@ -887,18 +898,24 @@ else:
                   </div>
                 </div>
               </div>
+              <p class="cap has-text-centered" style="margin-top:1.2rem;max-width:760px;margin-left:auto;margin-right:auto;">Look closer at the misses in the scatter: many hug the boundary — <b style="color:#b5730a;">near-misses</b> (0 ≤ d &lt; 0.5 r): <b>38 points</b> in total, Qwen <b>26</b> of its 50 misses · RoboBrain <b>12</b> of its 43. But not all of them… <b>→ ②</b></p>
             </div>
             <div class="subpanel" data-i="1">
               <div class="columns is-vcentered">
-                <div class="column is-7"><figure><img src="figs/ctx_signed_scatter.png" style="max-height:520px;width:auto;margin:0 auto;display:block;"></figure></div>
+                <div class="column is-7"><figure><img src="figs/ctx_nearmiss_dist_k.png"></figure></div>
                 <div class="column is-5">
-                  <p style="margin-bottom:.5rem;">Each dot is one question (x = Qwen, y = RoboBrain signed distance). <b>3 of 4 quadrants</b> are covered by at least one model inside → <span class="g">95 / 122 ≈ 78%</span>.</p>
-                  <p class="cap">The two rarely miss the same question, so the union reaches ~78% vs RoboBrain 65% / Qwen 57% alone.</p>
+                  <p style="margin-bottom:.5rem;"><b>Both models miss near the boundary a lot</b> — but the tails differ: <b class="b">RoboBrain’s misses skew far</b> (median ≈ 0.9 r, a cluster beyond 1.5 r → wrong region), while <b class="r">Qwen’s cluster near</b> (median ≈ 0.4 r → right region, just outside).</p>
+                  <p class="cap">Yet Qwen — the <i>reasoner</i> — still has a real far-miss tail. Why would a model that reasons out loud miss by a lot?</p>
                 </div>
               </div>
-            </div>
-            <div class="subpanel" data-i="2">
-              <p class="cap has-text-centered" style="margin-bottom:1rem;max-width:860px;margin-left:auto;margin-right:auto;">Reading Qwen’s <code>&lt;think&gt;</code> traces, grouped by how far the point landed (log-ratio of over-used terms).</p>
+              <div class="columns is-vcentered" style="margin-top:1rem;">
+                <div class="column is-5"><figure><img src="figs/ctx_farnear_example.png" style="max-height:420px;width:auto;margin:0 auto;display:block;"></figure></div>
+                <div class="column is-7">
+                  <p style="margin-bottom:.5rem;"><b>Both styles in one question</b> — “vacant space in front of the teddy bear”: <b class="b">RoboBrain far-misses</b> (145% r, wrong region) while <b class="r">Qwen near-misses</b> (26% r, just outside).</p>
+                  <p class="cap">Even the union’s residual errors look like this — when both miss, they miss <i>differently</i>.</p>
+                </div>
+              </div>
+              <p class="cap has-text-centered" style="margin:1.4rem auto 1rem;max-width:860px;">To find out, we read Qwen’s <code>&lt;think&gt;</code> traces, grouped by how far the point landed (log-ratio of over-used terms).</p>
               <p class="opt-label has-text-centered" style="margin-bottom:.7rem;">Same question type, two reasoning styles</p>
               <div class="columns" style="margin-bottom:1.3rem;">
                 <div class="column is-6"><div class="block-card" style="box-shadow:none;">
@@ -933,9 +950,9 @@ else:
       <div style="margin-top:2.2rem;padding-top:1.5rem;border-top:1px solid #e7e7e7;">
         <p class="opt-label has-text-centered" style="margin-bottom:.9rem;">Final result — the union clears every single model (→ 78.7 official)</p>
         <div class="columns is-vcentered">
-          <div class="column is-7"><figure><img src="figs/context_solo_union.png" style="max-height:420px;width:auto;margin:0 auto;display:block;"></figure></div>
+          <div class="column is-7"><figure><img src="figs/context_solo_union.png?v=7" style="max-height:420px;width:auto;margin:0 auto;display:block;"></figure></div>
           <div class="column is-5">
-            <p style="margin-bottom:.5rem;">Best single model <b>64.8</b> → union <b>RoboBrain greedy·no-frame ⊕ Qwen sampling·object</b> = <span class="g">77.9</span> (public) · <b>78.7</b> official.</p>
+            <p style="margin-bottom:.5rem;">Best single model <b>66.4</b> → union <b>RoboBrain greedy·no-frame ⊕ Qwen sampling·object</b> = <span class="g">78.7</span> micro / <b>72.3</b> macro.</p>
             <p class="cap">Complementary errors — not a bigger model — are the lever. #1 among candidate unions on both raw and balanced.</p>
           </div>
         </div>
