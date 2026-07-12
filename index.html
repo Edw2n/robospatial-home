@@ -430,7 +430,7 @@
                   <span class="pill p">Problem</span>
                   <p style="margin:.5rem 0 .6rem;">The model reasons to a conclusion, then the <b>final Yes/No token contradicts it</b>.</p>
                   <figure style="margin:.2rem 0 .6rem;"><img src="figs/config/parser_example.png"></figure>
-                  <p class="cap"><b>Rare &amp; strictly one-sided:</b> Config 4/123 disagreements, reasoning right 4/4; Compat 3/105, right 3/3. The stray token only over-rejects — never adds a wrong “Yes.”</p>
+                  <p class="cap"><b>When they disagree, the reasoning is right</b> — 4/4 in Config, 3/3 in Compat. Every mismatch was an over-rejection, so the fix only restores wrongly rejected answers.</p>
                 </div></div>
                 <div class="column is-6"><div class="block-card" style="box-shadow:none;">
                   <span class="pill f">Solution</span>
@@ -519,7 +519,7 @@ else:
               </div>
               <div class="columns is-vcentered">
                 <div class="column is-5"><p class="step-lead" style="margin-bottom:.5rem;"><b>So what really improved?</b></p>
-                  <p>The gain is one-sided: <span class="g">+13 over-rejections fixed</span> on the “Yes” side (false-“No” 25 → 12), with <b>no change</b> on the “No” side — no new false “Yes”. The extra reasoning only rescues cases it used to wrongly reject.</p>
+                  <p>The gain is all on the “Yes” side: <span class="g">+13 over-rejections fixed</span> (false-“No” 25 → 12), with <b>no change</b> on the “No” side — no new false “Yes”. The extra reasoning only rescues cases it used to wrongly reject.</p>
                   </div>
                 <div class="column is-7"><figure><img src="figs/config/confusion_beforeafter.png"></figure></div>
               </div>
@@ -638,7 +638,7 @@ else:
     answer = conc   # trust reasoning
 else:
     answer = final</code></pre>
-                  <p class="cap" style="margin-top:.6rem;">Compatibility: <b>3 / 105</b> disagreements, reasoning right <span class="g">3 / 3</span> → <b>+2.9</b> raw (76.2 → 79.0). One-sided — it never adds a wrong “Yes”.</p>
+                  <p class="cap" style="margin-top:.6rem;">When they disagree, the reasoning is right — <span class="g">3 / 3</span> here (4/4 in Configuration, too). Every mismatch was an over-rejection, so the fix only restores wrongly rejected answers: <b>+2.9</b> raw (76.2 → 79.0).</p>
                 </div></div>
               </div>
             </div>
