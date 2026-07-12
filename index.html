@@ -166,6 +166,7 @@
       <a class="navbar-item nav-tab" href="#config">Configuration</a>
       <a class="navbar-item nav-tab" href="#compat">Compatibility</a>
       <a class="navbar-item nav-tab" href="#context">Context</a>
+      <a class="navbar-item nav-tab" href="#future">Next</a>
       <a class="navbar-item nav-tab" href="#team">Team</a>
       <a class="navbar-item" href="[CODE_URL]">GitHub</a>
     </div></div>
@@ -957,6 +958,22 @@ else:
           </div>
         </div>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- FUTURE WORK -->
+<section id="future" class="section">
+  <div class="container" style="max-width:860px;">
+    <p class="kicker has-text-centered">From the analyses</p>
+    <h2 class="title is-3 sec-title has-text-centered" style="margin-bottom:1.6rem;">What these analyses suggest trying</h2>
+    <div class="content" style="font-size:1.05rem;color:#333;">
+      <ol style="margin-left:1.4rem;">
+        <li style="margin-bottom:.9rem;"><b>Convert near-misses into hits</b> — half of Qwen’s pointing misses land within 0.5 r of the boundary. Predict <i>multiple</i> points and aggregate them into the region they jointly point at — approximating its interior — so the final point lands safely inside rather than on the edge.</li>
+        <li style="margin-bottom:.9rem;"><b>Frame-expert ensemble, weighted by the trace</b> — prompt (or fine-tune) one expert per view-centric frame, then select or weight their answers by each trace’s failure markers: fewer hedging / perspective-tangle words → higher weight.</li>
+        <li style="margin-bottom:.9rem;"><b>Teach the fitting behaviors, grounded in depth</b> — correct Compat traces do size comparison and space-status checks; guide training toward exactly those behaviors and connect them to depth, so clearance is measured rather than eyeballed.</li>
+        <li style="margin-bottom:0;"><b>Aim for the interior, not the edge</b> — near-misses hug the mask boundary; a margin-aware pointing loss (reward signed distance <i>inside</i> the region) and reasoning supervised on concrete geometry — the “middle / center / space-between” moves that hits already make — would push predictions to safer positions.</li>
+      </ol>
     </div>
   </div>
 </section>
