@@ -180,7 +180,7 @@
       <a href="https://www.instagram.com/anonymous_ikm/" target="_blank" rel="noopener" class="anon-link"><img src="figs/anon.png" alt="Anonymous" style="height:1.5em;width:auto;vertical-align:middle;cursor:pointer;"><span class="tip">This is my favorite character called <b>ikmyung</b> — it means <i>anonymous</i>. @anonymous_ikm</span></a>
       Team — Anonymous
     </h1>
-    <p class="subtitle is-4">A zero-shot, open-weight recipe for spatial reasoning on RoboSpatial-Home</p>
+    <p class="subtitle is-4">Eliciting spatial skills from open-weight VLMs — a zero-shot, per-task recipe for RoboSpatial-Home</p>
     <p class="is-size-6" style="color:#555;"><a href="https://edw2n.github.io" target="_blank" rel="noopener" style="color:inherit;text-decoration:none;">Eunsu Baek</a>, Seoul National University</p>
     <div class="buttons is-centered" style="margin-top:1.2rem;">
       <a class="button is-light" href="[VIDEO_URL]">🎥 Video</a>
@@ -194,7 +194,7 @@
       <div class="column metric has-text-centered"><div class="n">78.7</div><div class="l">Context</div></div>
       <div class="column metric has-text-centered"><div class="n">2<sup>nd</sup></div><div class="l">Leaderboard</div></div>
     </div>
-    <p class="is-size-7" style="color:#888;margin-top:.3rem;">public point-in-mask / yes-no accuracy · zero-shot, no training</p>
+    <p class="is-size-7" style="color:#888;margin-top:.3rem;">yes-no / point-in-mask accuracy · zero-shot, no training</p>
   </div></div>
 </header>
 
@@ -256,7 +256,7 @@
     </p>
     <div class="columns is-multiline">
       <div class="column is-4"><div class="block-card"><p class="title is-6" style="margin-bottom:.4rem;">① Model <span class="cap">· which base model</span></p>
-        <p>Depending on their <b>training data</b>, models specialize in <b>different spatial tasks</b>. We pair a <b>spatial reasoner</b> (Qwen3-VL-Thinking) with a <b>pointing specialist</b> (RoboBrain-2.5).</p></div></div>
+        <p>Depending on their <b>training data</b>, models specialize in <b>different spatial tasks</b>. We pair a <b>spatial reasoner</b> (Qwen3-VL-Thinking) with a <b>pointing specialist</b> (RoboBrain2.5-8B-MT).</p></div></div>
       <div class="column is-4"><div class="block-card"><p class="title is-6" style="margin-bottom:.4rem;">② Reasoning <span class="cap">· Thinking vs Instruct checkpoint</span></p>
         <p>Qwen3-VL ships as <b>two separate checkpoints</b> — <b>Thinking</b> emits <code>&lt;think&gt;</code> traces and avoids defaulting to a <b>prior</b>. Reasoning is <b>asymmetric</b>: it helps the reasoner (Qwen keeps it even for pointing) but <b>derails RoboBrain’s pointing</b>.</p></div></div>
       <div class="column is-4"><div class="block-card"><p class="title is-6" style="margin-bottom:.4rem;">③ Decoding <span class="cap">· greedy vs sampling</span></p>
@@ -530,7 +530,7 @@ else:
     <div style="margin-top:2.2rem;padding-top:1.5rem;border-top:1px solid #e7e7e7;">
       <p class="opt-label has-text-centered" style="margin-bottom:.9rem;">Final result — the two fixes stack to 91.5%</p>
       <div class="columns is-vcentered">
-        <div class="column is-7"><figure><img src="figs/config/config_gain_waterfall.png" style="max-height:440px;width:auto;margin:0 auto;display:block;"></figure></div>
+        <div class="column is-7"><figure><img src="figs/config/config_gain_waterfall.png?v=2" style="max-height:440px;width:auto;margin:0 auto;display:block;"></figure></div>
         <div class="column is-5">
           <p style="margin-bottom:.5rem;"><b>81.4%</b> default → <span class="g">+6.8</span> object frame → <span class="g">+3.4</span> parser → <b>91.5%</b>.</p>
           <p style="margin-bottom:.5rem;"><b>+10.2 pt total</b> (81.4 → 91.5).</p>
@@ -544,7 +544,7 @@ else:
           <p style="margin-bottom:.5rem;">The whole gain is <b>Yes-recall</b> (<span class="g">73.6 → 90.3</span>); No-recall never moves off 93.5. The frame fixes <b>over-rejection</b> — the opposite of a Yes-prior.</p>
           <p class="cap">A blind-“Yes” baseline gets 61% raw but only <b>50% balanced</b>. That gap is the real spatial skill.</p>
         </div>
-        <div class="column is-7"><figure><img src="figs/config/config_macro.png" style="max-height:380px;width:auto;margin:0 auto;display:block;"></figure></div>
+        <div class="column is-7"><figure><img src="figs/config/config_macro.png?v=2" style="max-height:380px;width:auto;margin:0 auto;display:block;"></figure></div>
       </div>
     </div>
   </div>
@@ -989,6 +989,23 @@ else:
   year   = {2026},
   note   = {2nd place, RoboSpatial-Home Challenge · ERA Workshop @ CVPR 2026}
 }</pre>
+    <div style="margin-top:2rem;">
+      <p class="kicker has-text-centered" style="margin-bottom:.6rem;">References &amp; resources</p>
+      <div class="content" style="font-size:.92rem;color:#555;max-width:760px;margin:0 auto;">
+        <ul style="margin-left:1.2rem;">
+          <li><b>RoboSpatial / RoboSpatial-Home</b> — benchmark &amp; official evaluation (<a href="https://github.com/chanhee-luke/RoboSpatial-Eval" target="_blank" rel="noopener">RoboSpatial-Eval</a>); Song et&nbsp;al., <i>RoboSpatial: Teaching Spatial Understanding to 2D and 3D Vision-Language Models for Robotics</i>, CVPR 2025.</li>
+          <li><b>Qwen3-VL-32B</b> (Thinking / Instruct checkpoints) — Qwen team, Alibaba (<a href="https://huggingface.co/Qwen/Qwen3-VL-32B-Thinking" target="_blank" rel="noopener">Hugging&nbsp;Face</a>).</li>
+          <li><b>RoboBrain2.5-8B-MT</b> — BAAI (<a href="https://huggingface.co/BAAI" target="_blank" rel="noopener">Hugging&nbsp;Face</a>).</li>
+          <li><b>RoboPoint</b> — Yuan et&nbsp;al., <i>RoboPoint: A Vision-Language Model for Spatial Affordance Prediction for Robotics</i>, CoRL 2024 (<a href="https://github.com/wentaoyuan/RoboPoint" target="_blank" rel="noopener">GitHub</a>).</li>
+          <li><b>RoboRefer</b> — Zhou et&nbsp;al., <i>RoboRefer: Towards Spatial Referring with Reasoning in Vision-Language Models for Robotics</i>, 2025 (<a href="https://arxiv.org/abs/2506.04308" target="_blank" rel="noopener">arXiv:2506.04308</a>).</li>
+          <li><b>SpatialVLM</b> — Chen et&nbsp;al., <i>SpatialVLM: Endowing Vision-Language Models with Spatial Reasoning Capabilities</i>, CVPR 2024.</li>
+          <li><b>Molmo</b> — Deitke et&nbsp;al., <i>Molmo and PixMo: Open Weights and Open Data for State-of-the-Art Multimodal Models</i>, 2024 (<a href="https://arxiv.org/abs/2409.17146" target="_blank" rel="noopener">arXiv:2409.17146</a>).</li>
+          <li><b>LLaVA-NeXT</b> — Liu et&nbsp;al., <i>LLaVA-NeXT: Improved Reasoning, OCR, and World Knowledge</i>, 2024 (<a href="https://llava-vl.github.io/blog/2024-01-30-llava-next/" target="_blank" rel="noopener">project</a>).</li>
+          <li><b>Qwen2-VL</b> — Wang et&nbsp;al., <i>Qwen2-VL: Enhancing Vision-Language Model’s Perception of the World at Any Resolution</i>, 2024 (<a href="https://arxiv.org/abs/2409.12191" target="_blank" rel="noopener">arXiv:2409.12191</a>).</li>
+          <li class="cap" style="list-style:none;margin-left:-1.2rem;margin-top:.4rem;">All baseline numbers on the leaderboard are our own runs through RoboSpatial-Eval.</li>
+        </ul>
+      </div>
+    </div>
   </div>
 </section>
 
