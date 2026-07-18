@@ -35,6 +35,12 @@
   .anon-link .tip b{ color:#ffd21e; } .anon-link .tip i{ color:#cfe0ff; }
   .anon-link .tip::after{ content:''; position:absolute; top:100%; left:50%; transform:translateX(-50%); border:6px solid transparent; border-top-color:#1b2a4a; }
   .anon-link:hover .tip{ opacity:1; transform:translateX(-50%) translateY(0); }
+  .cert-chip{ cursor:zoom-in; margin-left:.45rem; }
+  .lb{ position:fixed; inset:0; background:rgba(12,17,28,.85); display:none;
+       align-items:center; justify-content:center; z-index:300; cursor:zoom-out; }
+  .lb.open{ display:flex; }
+  .lb img{ max-width:88vw; max-height:88vh; border-radius:10px;
+           box-shadow:0 18px 60px rgba(0,0,0,.55); background:#fff; }
   .sec-title{ color:var(--navy); }
   .kicker{ color:var(--amber); font-weight:700; letter-spacing:.06em; text-transform:uppercase; font-size:.78rem; }
   .task-badge{ background:var(--navy); color:#fff; border-radius:6px; padding:.15rem .6rem; font-weight:700; }
@@ -187,6 +193,7 @@
       <a class="button is-light" href="https://youtu.be/DXFAzOnG-10" target="_blank" rel="noopener">🎥 Video</a>
       <a class="button is-light" href="slides.pdf" target="_blank" rel="noopener">📊 Slides</a>
       <a class="button is-light" href="https://github.com/Edw2n/robospatial-challenge-submission" target="_blank" rel="noopener">💻 Code</a>
+      <a class="button is-light cert-open" style="cursor:zoom-in;">🏆 Certificate</a>
     </div>
     <div class="columns is-mobile is-centered" style="margin-top:3.2rem;margin-bottom:1rem;max-width:940px;margin-left:auto;margin-right:auto;">
       <div class="column metric has-text-centered"><div class="n">83.1</div><div class="l">Overall</div></div>
@@ -1060,6 +1067,13 @@ else:
     tabs.forEach(t=>t.addEventListener('click',()=>show(+t.dataset.i)));
     show(0);
   });
+</script>
+<div class="lb" id="cert-lb"><img src="figs/certificate.png" alt="2nd place certificate"></div>
+<script>
+(()=>{const lb=document.getElementById('cert-lb');
+if(lb){document.querySelectorAll('.cert-open').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();lb.classList.add('open');}));
+lb.addEventListener('click',()=>lb.classList.remove('open'));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')lb.classList.remove('open');});}})();
 </script>
 </body>
 </html>
